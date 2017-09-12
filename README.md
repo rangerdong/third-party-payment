@@ -4,4 +4,9 @@
 
 ####2017/9/12开始开发
   持续更新开发中
+  
+  搭建的[laravel-admin](https://github.com/z-song/laravel-admin)后台框架，可去github上下载。
+  
+  
+  
  
