@@ -29,7 +29,7 @@ admin用户帐密:
 
 # 相关内容
 
-[`laravel-admin`](https://github.com/z-song/laravel-admin.git)  [查看文档](http://laravel-admin.org/docs/#/zh)
+[`laravel-admin`](https://github.com/z-song/laravel-admin.git)  [查看文档](http://laravel-admin.org/docs/#/zh/)
 
   
   
