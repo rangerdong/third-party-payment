@@ -12,7 +12,7 @@ class DictInterfaceTableSeeder extends Seeder
     public function run()
     {
         //
-        DB::table('dict_interfaces')->insert(
+        DB::table('dict_interfaces')->insert([
             [
                 'name' => '微信官方',
                 'identify' => 'weixin'
@@ -33,6 +33,6 @@ class DictInterfaceTableSeeder extends Seeder
                 'name' => '汇潮',
                 'identify' => 'ecpss'
             ]
-        );
+        ]);
     }
 }

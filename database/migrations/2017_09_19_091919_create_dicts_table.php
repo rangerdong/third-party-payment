@@ -18,7 +18,8 @@ class CreateDictsTable extends Migration
             $table->string('name', 100)->comment('通道名称');
             $table->string('identify', 50)->comment('通道编码');
             $table->tinyInteger('order')->default(0)->comment('排序ID');
-            $table->tinyInteger('type')->default(0)->comment('0 一级通道 1 网银通道');
+            $table->tinyInteger('is_bank')->default(0)->comment('0否 1是');
+            $table->unique(['name', 'identify']);
             $table->timestamps();
         });
 
@@ -26,6 +27,7 @@ class CreateDictsTable extends Migration
             $table->increments('id');
             $table->string('name', 100)->comment('接口商名称');
             $table->string('identify', 50)->comment('接口商编码');
+            $table->unique(['name', 'identify']);
             $table->timestamps();
 
         });

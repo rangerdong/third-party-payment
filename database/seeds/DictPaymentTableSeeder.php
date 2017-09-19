@@ -12,107 +12,152 @@ class DictPaymentTableSeeder extends Seeder
     public function run()
     {
         //
-        DB::table('dict_payments')->insert(
+        DB::table('dict_payments')->insert([
             [
                 'name' => '支付宝扫码',
                 'identify' => 'alipay',
+                'is_bank' => 0
             ],
             [
                 'name' => '微信扫码',
-                'identify' => 'weixin'
+                'identify' => 'weixin',
+                'is_bank' => 0
             ],
             [
                 'name' => '网银支付',
-                'identify' => 'bank'
+                'identify' => 'bank',
+                'is_bank' => 0
             ],
             [
                 'name' => '支付宝WAP',
-                'identify' => 'alipay_wap'
+                'identify' => 'alipay_wap',
+                'is_bank' => 0
             ],
             [
                 'name' => '微信WAP',
-                'identify' => 'weixin_wap'
+                'identify' => 'weixin_wap',
+                'is_bank' => 0
             ],
             [
                 'name' => '中国工商银行',
                 'identify' => 'icbc',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '中国农业银行',
                 'identify' => 'abc',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '招商银行',
                 'identify' => 'cmb',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '中国银行',
                 'identify' => 'boc',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '中国民生银行',
                 'identify' => 'cmbc',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '中国建设银行',
                 'identify' => 'ccb',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '中信银行',
                 'identify' => 'citic',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '交通银行',
                 'identify' => 'comm',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '兴业银行',
                 'identify' => 'cib',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '光大银行',
                 'identify' => 'ceb',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '深圳发展银行',
                 'identify' => 'sdb',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '中国邮政',
                 'identify' => 'psbc',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '北京银行',
                 'identify' => 'bob',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '平安银行',
                 'identify' => 'pab',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '上海浦东发展银行',
                 'identify' => 'spdb',
-                'type' => 1
+                'is_bank' => 1
             ],
             [
                 'name' => '广东发展银行',
                 'identify' => 'gdb',
-                'type' => 1
+                'is_bank' => 1
+            ],
+            [
+                'name' => '宁波银行',
+                'identify' => 'nbcb',
+                'is_bank' => 1
+            ],
+            [
+                'name' => '北京农村商业银行',
+                'identify' => 'bjrcb',
+                'is_bank' => 1
+            ],
+            [
+                'name' => '南京银行',
+                'identify' => 'njcb',
+                'is_bank' => 1
+            ],
+            [
+                'name' => '浙商银行',
+                'identify' => 'czb',
+                'is_bank' => 1
+            ],
+            [
+                'name' => '上海银行',
+                'identify' => 'bosh',
+                'is_bank' => 1
+            ],
+            [
+                'name' => '华夏银行',
+                'identify' => 'hxb',
+                'is_bank' => 1
+            ],
+            [
+                'name' => '杭州银行',
+                'identify' => 'hzb',
+                'is_bank' => 1
+            ],
+            [
+                'name' => '浙江江稠州商业银行',
+                'identify' => 'czcb',
+                'is_bank' => 1
             ]
-        );
+        ]);
     }
 }

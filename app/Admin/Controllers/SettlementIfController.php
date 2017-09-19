@@ -2,7 +2,9 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\PoInterface;
+use App\Models\DictInterface;
+use App\Models\DictPayment;
+use App\Models\SettlementIf;
 
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -11,7 +13,7 @@ use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 
-class PoInterfaceController extends Controller
+class SettlementIfController extends Controller
 {
     use ModelForm;
 
@@ -24,8 +26,8 @@ class PoInterfaceController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('结算渠道管理');
-            $content->description('渠道列表');
+            $content->header('结算交易接口 管理');
+            $content->description('接口列表');
 
             $content->body($this->grid());
         });
@@ -41,8 +43,8 @@ class PoInterfaceController extends Controller
     {
         return Admin::content(function (Content $content) use ($id) {
 
-            $content->header('结算渠道修改');
-            $content->description(PoInterface::find($id)->name. ' 渠道修改');
+            $content->header('结算交易接口 修改');
+            $content->description(SettlementIf::find($id)->name . ' 修改');
 
             $content->body($this->form()->edit($id));
         });
@@ -57,8 +59,8 @@ class PoInterfaceController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('结算渠道新增');
-            $content->description('description');
+            $content->header('结算交易接口 添加');
+            $content->description('接口新增');
 
             $content->body($this->form());
         });
@@ -71,18 +73,17 @@ class PoInterfaceController extends Controller
      */
     protected function grid()
     {
-        return Admin::grid(PoInterface::class, function (Grid $grid) {
+        return Admin::grid(SettlementIf::class, function (Grid $grid) {
 
             $grid->id('ID')->sortable();
-            $grid->column('name', '渠道接口名称');
-            $grid->identify('接口字典标识');
+            $grid->column('name', '接口名称');
+            $grid->column('ifdict.name', '接口商');
             $grid->type('结算类型')->display(function ($type) {
                 return $type == 1 ? '单笔': '批量';
             });
             $grid->status('接口状态')->display(function ($status) {
                 return $status ? '开启' : '关闭';
             });
-
             $grid->created_at();
             $grid->updated_at();
         });
@@ -95,15 +96,13 @@ class PoInterfaceController extends Controller
      */
     protected function form()
     {
-        return Admin::form(PoInterface::class, function (Form $form) {
+        return Admin::form(SettlementIf::class, function (Form $form) {
 
             $form->display('id', 'ID');
-            $po_interfaces = config('dictionary.interface.po');
-            if (empty($po_interfaces)) {
-                throw  new \Exception('暂无可添加的结算渠道商');
-            }
-            $form->select('identify', '渠道标识')->options($po_interfaces);
-            $form->text('name', '渠道定义名')->rules('required|max:255');
+            $form->select('if_id', '接口商')->options(DictInterface::all()->pluck('name', 'id'));
+            $form->multipleSelect('payments', '支持通道')
+                ->options(DictPayment::all()->pluck('name', 'id'));
+            $form->text('name', '接口名称')->rules('required|max:255');
             $form->text('mc_id', '商户id')->rules('required|max:255');
             $form->text('mc_key', '商户密钥')->rules('required|max:255');
             $form->text('gw_pay', '结算网关')->rules('required|url');
@@ -117,7 +116,6 @@ class PoInterfaceController extends Controller
                 0 => '关闭'
             ])->default(1);
             $form->textarea('ext', '额外字段(json存储)')->rows(10);
-
             $form->display('created_at', 'Created At');
             $form->display('updated_at', 'Updated At');
         });
