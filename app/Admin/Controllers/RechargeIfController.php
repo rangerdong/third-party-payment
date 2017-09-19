@@ -6,12 +6,17 @@ use App\Models\DictInterface;
 use App\Models\DictPayment;
 use App\Models\RechargeIf;
 
+use App\Models\RechargeIfPms;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use Encore\Admin\Layout\Row;
+use Encore\Admin\Widgets\InfoBox;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RechargeIfController extends Controller
 {
@@ -84,6 +89,9 @@ class RechargeIfController extends Controller
 
             $grid->created_at();
             $grid->updated_at();
+            $grid->actions(function ($actions) {
+                $actions->append('<a href="'.route('setrate', $actions->getKey()).'"><i class="fa fa-sliders"></i> 设置费率</a>');
+            });
         });
     }
 
@@ -101,7 +109,7 @@ class RechargeIfController extends Controller
             $form->multipleSelect('payments', '支持通道')
                 ->options(DictPayment::where('is_bank', 0)
                         ->get()
-                        ->pluck('name', 'id'));
+                        ->pluck('name', 'id'))->help('接口商支持的通道费率在列表设置(默认 98)');
             $form->text('name', '接口名称')->rules('required|max:100');
             $form->radio('status', '状态')->options([
                 0 => '关闭',
@@ -118,4 +126,37 @@ class RechargeIfController extends Controller
             $form->display('updated_at', 'Updated At');
         });
     }
+
+    public function setRate(Request $request, $id)
+    {
+        if ( ! $request->isMethod('post')) {
+            return Admin::content(function (Content $content) use ($id) {
+                $content->header('设置支持通道费率');
+                $content->description(RechargeIf::find($id)->name .' 设置');
+                $paymets = RechargeIf::find($id)->payments;
+                $form = new \Encore\Admin\Widgets\Form();
+                foreach ($paymets as $paymet) {
+                    $form->text('rates.'.$paymet->id, $paymet->name)
+                        ->default($paymet->pivot->rate)
+                        ->help('数值在99.999-0.001之间');
+                }
+                $content->body(function (Row $row) use ($form) {
+                    $row->column(12, '<a class="btn btn-sm btn-default form-history-back" href="/admin/interfaces/recharge"><i class="fa fa-arrow-left"></i> 返回</a>');
+                    $row->column(12, $form->render());
+                });
+            });
+        }
+        $this->validate($request, [
+            'rates.*' => ['required', 'numeric', 'regex:/(^([0-9]{1,2}\.)([0-9]{1,3})$)|(^[0-9]{1,2}$)/']
+        ]);
+        $rates = $request->input('rates');
+        foreach ($rates as $k => $rate) {
+            RechargeIfPms::where('if_id', $id)
+                ->where('pm_id', $k)->update([
+                    'rate' => $rate
+                ]);
+        }
+        return back();
+    }
+
 }

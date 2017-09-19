@@ -21,6 +21,6 @@ class RechargeIf extends Model
     public function payments()
     {
         return $this->belongsToMany(DictPayment::class, 'recharge_if_pms',
-            'if_id', 'pm_id');
+            'if_id', 'pm_id')->withPivot(['rate']);
     }
 }

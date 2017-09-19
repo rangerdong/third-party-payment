@@ -11,9 +11,12 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index');
-    //通道字典表
+    //通道字典
     $router->resource('/payments/dict', 'DictPaymentController');
+    //接口字典
     $router->resource('/interfaces/dict', 'DictInterfaceController');
+
+    $router->any('/interfaces/recharge/{id}/setRate', 'RechargeIfController@setRate')->name('setrate');
     $router->resource('/interfaces/recharge', 'RechargeIfController');
     $router->resource('/interfaces/settlement', 'SettlementIfController');
 

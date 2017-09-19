@@ -17,6 +17,7 @@ class CreateRechargeIfPmsTable extends Migration
             $table->increments('id');
             $table->integer('if_id')->comment('接口id');
             $table->integer('pm_id')->comment('通道id');
+            $table->unique(['if_id', 'pm_id']);
             $table->timestamps();
         });
     }
