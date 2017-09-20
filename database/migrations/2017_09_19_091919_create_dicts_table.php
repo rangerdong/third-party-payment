@@ -19,6 +19,7 @@ class CreateDictsTable extends Migration
             $table->string('identify', 50)->comment('通道编码');
             $table->tinyInteger('order')->default(0)->comment('排序ID');
             $table->tinyInteger('is_bank')->default(0)->comment('0否 1是');
+            $table->tinyInteger('status')->default(1)->comment('是否开启 0关闭 1开启');
             $table->unique(['name', 'identify']);
             $table->timestamps();
         });

@@ -79,6 +79,9 @@ class DictPaymentController extends Controller
             $grid->column('is_bank', '网银通道')->display(function ($is_bank) {
                 return $is_bank ? '是' : '否';
             })->sortable();
+            $grid->status('通道状态')->display(function ($status) {
+                return $status ? '开启': '关闭';
+            });
             $grid->order('排序ID')->sortable();
             $grid->disableExport();
         });
@@ -100,6 +103,10 @@ class DictPaymentController extends Controller
                 0 => '否',
                 1 => '是'
             ])->default(0);
+            $form->radio('status', '是否开启')->options([
+                0 => '关闭',
+                1 => '开启'
+            ])->default(1);
             $form->number('order', '排序ID')->help('客户端显示顺序');
 
             $form->display('updated_at', '修改时间');
