@@ -19,6 +19,7 @@ class CreateRechargeSplitModesTable extends Migration
             $table->integer('pm_id')->comment('通道类型');
             $table->integer('df_if_id')->comment('默认接口');
             $table->integer('sp_if_id')->default(0)->comment('备用接口');
+            $table->decimal('rate', 5,3)->default(99)->comment('默认费率');
             $table->tinyInteger('is_default')->default(0)->comment('是否默认 0否 1默认');
             $table->unique(['name', 'pm_id']);
             $table->softDeletes();
