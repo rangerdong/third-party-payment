@@ -20,6 +20,13 @@ Route::group([
     $router->resource('/interfaces/recharge', 'RechargeIfController');
     $router->resource('/interfaces/settlement', 'SettlementIfController');
 
+    $router->resource('/splitmode/recharge', 'RechargeSplitModeController');
+
+
+
+    $router->group(['prefix' => 'api'], function($r) {
+        $r->get('getifs/{type}', 'ApiController@getIfsFromPm')->name('getifs');
+    });
 
 
 });
