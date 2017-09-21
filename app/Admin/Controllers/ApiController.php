@@ -25,6 +25,10 @@ class ApiController extends Controller
                 })->get(['id', 'name as text']);
             return $arr;
         }
+    }
+
+    public function addPayment(Request $request)
+    {
 
     }
 }

@@ -103,7 +103,8 @@ class RechargeSplitModeController extends Controller
             $form->display('id', 'ID');
             $form->select('pm_id', '通道处理类型')
                 ->options(DictPayment::where('is_bank', 0)->pluck('name', 'id'))
-                ->loads(['df_if_id', 'sp_if_id'], route('getifs', 'recharge'));
+                ->load('df_if_id', route('getifs', 'recharge'))
+                ->load('pm_if_id', route('getifs', 'recharge'));
             $form->text('name', '模式名称')->rules('required|max:100');
             $form->select('df_if_id', '默认接口商')->options($init_ifs)->rules('required');
             $form->select('sp_if_id', '备用接口商')->options($init_ifs);
