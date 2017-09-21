@@ -2,8 +2,14 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Lib\Code;
+use App\Models\DictPayment;
+use App\Models\RechargeGroupPayment;
 use App\Models\RechargeIf;
 use App\Models\RechargeIfPms;
+use App\Models\RechargeSplitMode;
+use App\Services\ApiResponseService;
+use App\Services\RechargeGroupService;
 use Illuminate\Http\Request;
 
 class ApiController extends Controller
@@ -27,8 +33,26 @@ class ApiController extends Controller
         }
     }
 
-    public function addPayment(Request $request)
+    public function addPayment(Request $request, $group_id)
     {
+        $payment_id = $request->input('payment_id');
+        try {
 
+            if ($payment_id == 0) {
+                $payments = DictPayment::recharge()->get();
+                foreach ($payments as $payment) {
+                    RechargeGroupService::addPayment($group_id, $payment->id);
+                }
+                return ApiResponseService::success(Code::SUCCESS);
+            } else {
+                if (RechargeGroupService::addPayment($group_id, $payment_id)) {
+                    return ApiResponseService::success(Code::SUCCESS);
+                } else {
+                    return ApiResponseService::showError(Code::FATAL_ERROR, '添加错误');
+                }
+            }
+        } catch (\Exception $exception) {
+            return ApiResponseService::showError(Code::FATAL_ERROR, $exception->getMessage());
+        }
     }
 }

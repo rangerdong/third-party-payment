@@ -14,6 +14,16 @@ class RechargeSplitMode extends Model
         return $this->belongsTo(DictPayment::class, 'pm_id');
     }
 
+    public function scopePayment($query, $id)
+    {
+        return $query->where('pm_id', $id);
+    }
+
+    public function scopeDefault($query)
+    {
+        return $query->where('is_default', 1);
+    }
+
     public function defaultif()
     {
         return $this->belongsTo(RechargeIf::class, 'df_if_id');

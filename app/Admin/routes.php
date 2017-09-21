@@ -30,7 +30,7 @@ Route::group([
 
     $router->group(['prefix' => 'api'], function($r) {
         $r->get('getifs/{type}', 'ApiController@getIfsFromPm')->name('getifs');
-        $r->get('group/pmadd', 'ApiController@addPayment')->name('group.pmadd');
+        $r->get('group/{id}/pmadd', 'ApiController@addPayment')->name('group.pmadd');
     });
 
 

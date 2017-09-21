@@ -18,7 +18,6 @@ class CreateRechargeGroupPaymentsTable extends Migration
             $table->integer('gid')->nullable()->comment('分组id');
             $table->integer('uid')->nullable()->comment('用户id');
             $table->integer('pm_id')->comment('通道id');
-            $table->string('pm_identify', 50)->comment('通道编码');
             $table->decimal('rate', 5, 3)->comment('商户费率');
             $table->integer('mode_id')->comment('处理模式id');
             $table->tinyInteger('status')->default(1)->comment('是否开启');
