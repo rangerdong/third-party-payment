@@ -18,6 +18,7 @@ use Encore\Admin\Controllers\ModelForm;
 use Encore\Admin\Layout\Row;
 use Encore\Admin\Widgets\Table;
 use Illuminate\Http\Request;
+use Illuminate\Support\MessageBag;
 
 class RechargeGroupController extends Controller
 {
@@ -84,7 +85,7 @@ class RechargeGroupController extends Controller
             $grid->id('ID')->sortable();
             $grid->name('分组名');
             $grid->classify('分组类别')->display(function ($classify) {
-                return config('dictionary.user_classify.'.$classify);
+                return config('dictionary.user_roles.'.$classify);
             });
             $grid->is_default('默认')->display(function ($is_default) {
                 return $is_default ? '是' : '否';
@@ -108,7 +109,7 @@ class RechargeGroupController extends Controller
         return Admin::form(RechargeGroup::class, function (Form $form) {
 
             $form->display('id', 'ID');
-            $form->select('classify', '分组类型')->options(config('dictionary.user_classify'));
+            $form->select('classify', '分组类型')->options(config('dictionary.user_roles'));
             $form->text('name', '分组名称')->rules('required|max:100');
             $form->radio('is_default', '是否默认')->options([
                 0 => '否',
@@ -192,9 +193,6 @@ class RechargeGroupController extends Controller
         } catch (\Exception $exception) {
             return ApiResponseService::showError(Code::FATAL_ERROR, $exception);
         }
-
-
-
 
     }
 }

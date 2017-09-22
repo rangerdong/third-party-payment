@@ -22,6 +22,8 @@ class CreatePlatUsersTable extends Migration
             $table->string('phone', 11)->nullable()->comment('手机号');
             $table->tinyInteger('type')->comment('账户类型 0个人 1企业');
             $table->tinyInteger('status')->default(0)->comment('账户状态 -1停用 0未审核 1已审核');
+            $table->tinyInteger('audit_email')->default(0)->comment('邮箱认证0未认证 1已认证');
+            $table->tinyInteger('audit_phone')->default(0)->comment('手机认证0未认证 1已认证');
             $table->tinyInteger('audit_realname')->default(0)->comment('实名认证0未认证 1已认证');
             $table->tinyInteger('audit_company')->default(0)->comment('企业认证0未认证 1已认证');
             $table->tinyInteger('audit_domains')->default(0)->comment('网址域名验证 0未验证 1已验证');

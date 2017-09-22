@@ -27,6 +27,8 @@ Route::group([
     $router->any('/group/{id}/payments', 'RechargeGroupController@payments')->name('group.payments');
     $router->resource('/group/recharge', 'RechargeGroupController');
 
+    //平台用户管理
+    $router->resource('/platuser', 'PlatUserController');
 
     $router->group(['prefix' => 'api'], function($r) {
         $r->get('getifs/{type}', 'ApiController@getIfsFromPm')->name('getifs');

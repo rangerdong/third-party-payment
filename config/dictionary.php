@@ -82,7 +82,7 @@ return [
         ]
     ],
 
-    'user_classify' => [
+    'user_roles' => [
         0 => '商户',
         1 => '代理',
         2 => '商务'
