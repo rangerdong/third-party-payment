@@ -188,7 +188,7 @@ class PlatUserController extends Controller
             $form->saving(function (Form $form) {
                 $form->password = password_hash($form->password, PASSWORD_DEFAULT);
                 $form->code = generateRandomCode($form->password);
-                $form->key = generateRandomCode()
+//                $form->key = generateRandomCode()
             });
 
         });
