@@ -4,12 +4,14 @@ namespace App\Admin\Controllers;
 
 use App\Models\PlatUser;
 
+use App\Models\RechargeGroup;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use Illuminate\Http\Request;
 
 class PlatUserController extends Controller
 {
@@ -114,21 +116,32 @@ class PlatUserController extends Controller
      */
     protected function form()
     {
+        Admin::js('js/admin/platuser/add.js');
         return Admin::form(PlatUser::class, function (Form $form) {
 
-            $form->display('code', '用户编号');
-            $form->text('username', '用户名')->rules('required|max:100|exists:customer_users,username');
+            $form->display('code', '商户编码');
+            $form->select('role', '用户角色')
+                ->options(config('dictionary.user_roles'))
+                ->default(0);
+            if ($form->model()->id) {
+                $form->display('code', '用户编号');
+            }
+            $form->text('username', '用户名')->placeholder('输入用户名 email格式')
+                ->rules('required|max:100|unique:plat_users,username|email');
+            $form->password('password', '用户密码')->default('');
             $form->select('type', '账户类型')->options([
                 0 => '个人',
                 1 => '企业'
-            ])->default(0);
-            $form->select('role', '用户角色')->options(config('dictionary.user_roles'))->default(0);
+            ])->default(1)->rules('required');
             $form->select('status', '账户状态')->options([
                 -1 => '停用',
                 0 => '未审核',
                 1 => '已审核'
-            ])->default(0);
-            $form->display('key', '商户密钥');
+            ])->default(0)->rules('required');
+            if ($form->model()->id) {
+                $form->display('key', '商户密钥')
+                    ->help("<a id='update-key'><i class='fa fa-refresh'></i> 更新密钥</a>", '');
+            }
             $audit_status = [
                 0 => '未验证',
                 1 => '已验证',
@@ -150,7 +163,7 @@ class PlatUserController extends Controller
             ]);
             $form->radio('recharge_api', '支付api功能')->options([
                 0 => '未开通',
-                1 => '已开庭'
+                1 => '已开通'
             ]);
             $form->radio('settle_api', '结算api功能')->options([
                 0 => '未开通',
@@ -161,6 +174,23 @@ class PlatUserController extends Controller
                 1 => 't+1',
                 7 => 't+7'
             ]);
+            $form->select('recharge_mode', '交易模式')->options([
+                0 => '按个人',
+                1 => '按分组'
+            ])->default(1)->rules('required');
+//            if ($form->model()->recharge_mode != 0) {
+            $form->select('recharge_gid', '交易分组')
+                ->options(RechargeGroup::where('classify', 0)
+                    ->orderBy('is_default', 'desc')
+                    ->pluck('name', 'id'))->rules('required');
+//            }
+
+            $form->saving(function (Form $form) {
+                $form->password = password_hash($form->password, PASSWORD_DEFAULT);
+                $form->code = generateRandomCode($form->password);
+                $form->key = generateRandomCode()
+            });
+
         });
     }
 }

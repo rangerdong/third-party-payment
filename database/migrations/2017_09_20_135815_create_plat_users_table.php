@@ -30,11 +30,11 @@ class CreatePlatUsersTable extends Migration
             $table->integer('audit_id')->default(0)->comment('认证资料信息');
             //登录信息
             $table->timestamp('last_at')->nullable()->comment('上次登录时间');
-            $table->integer('last_ip')->unsigned()->comment('上次登录IP');
-            $table->integer('reg_ip')->unsigned()->comment('注册ip');
+            $table->integer('last_ip')->default(0)->unsigned()->comment('上次登录IP');
+            $table->integer('reg_ip')->default(0)->unsigned()->comment('注册ip');
 
             //账户角色信息
-            $table->string('code', 10)->comment('账户编码');
+            $table->string('code', 15)->comment('账户编码');
             $table->string('key', 150)->comment('密钥');
             $table->tinyInteger('role')->comment('角色类型 0商户 1代理 2商务');
             $table->integer('upper_id')->default(0)->comment('上级id 0无上级');

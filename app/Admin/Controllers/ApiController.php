@@ -4,12 +4,15 @@ namespace App\Admin\Controllers;
 use App\Http\Controllers\Controller;
 use App\Lib\Code;
 use App\Models\DictPayment;
+use App\Models\PlatUser;
+use App\Models\RechargeGroup;
 use App\Models\RechargeGroupPayment;
 use App\Models\RechargeIf;
 use App\Models\RechargeIfPms;
 use App\Models\RechargeSplitMode;
 use App\Services\ApiResponseService;
 use App\Services\RechargeGroupService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ApiController extends Controller
@@ -54,5 +57,30 @@ class ApiController extends Controller
         } catch (\Exception $exception) {
             return ApiResponseService::showError(Code::FATAL_ERROR, $exception->getMessage());
         }
+    }
+
+    public function getRechargeMode(Request $request) : JsonResponse
+    {
+        $mode_type = $request->input('mode', null);
+        $role = $request->input('role', null);
+        $id = $request->input('id', null);
+        if ($mode_type == 0) {
+            return ApiResponseService::returnData(
+                ['groups' => ['id' => 0, 'name' => '个人通道']]
+            );
+        } else {
+            if ($id == null) {
+                $groups = RechargeGroup::where('classify', $role)
+                    ->orderBy('is_default', 'desc')
+                    ->select('id', 'name', 'is_default')
+                    ->get();
+                return ApiResponseService::returnData([
+                    'groups' => $groups
+                ]);
+            }
+
+        }
+
+
     }
 }

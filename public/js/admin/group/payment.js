@@ -12,7 +12,7 @@ $("button#add-single, button#add-full").on('click', function () {
     }
     $(this).attr('disabled', true);
     $.get('/admin/api/group/'+group_id+'/pmadd', {'payment_id': payment_id}, function (data) {
-        $(this).attr('disabled',alse);
+        $(this).attr('disabled',false);
         if (data.code == 0) {
             swal('添加成功', "通道添加成功", "success");
             window.location.reload();

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use  App\Lib\Code;
+use Illuminate\Database\Eloquent\Collection;
 
 class ApiResponseService
 {

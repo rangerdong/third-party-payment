@@ -28,11 +28,12 @@ Route::group([
     $router->resource('/group/recharge', 'RechargeGroupController');
 
     //平台用户管理
-    $router->resource('/platuser', 'PlatUserController');
+    $router->resource('/platusers', 'PlatUserController');
 
     $router->group(['prefix' => 'api'], function($r) {
         $r->get('getifs/{type}', 'ApiController@getIfsFromPm')->name('getifs');
         $r->get('group/{id}/pmadd', 'ApiController@addPayment')->name('group.pmadd');
+        $r->get('group/rechargemode', 'ApiController@getRechargeMode')->name('group.rechargemode');
     });
 
 
