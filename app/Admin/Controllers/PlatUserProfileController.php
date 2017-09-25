@@ -82,15 +82,14 @@ class PlatUserProfileController extends Controller
                 return $role == 1 ? '代理' :'商户';
             });
             $grid->column('auth_profile', '实名资料')->display(function () {
-                return $this->realname. "<br/>手持证件照<br/>证件照背面<br/>证件照正面";
+                return $this->realname. "<br/>".$this->idcard."<br/>手持证件照<br/>证件照背面<br/>证件照正面";
             });
 //            $grid->column('scope', '经营范围');
             $grid->column('enterprise_profile', '企业认证资料')->display(function (){
                 return $this->enterprise . "<br/>经营范围";
             });
             $grid->column('platuser.status', '审核状态');
-            $grid->created_at();
-            $grid->updated_at();
+            $grid->created_at('提交时间');
             $grid->disableCreation();
         });
     }

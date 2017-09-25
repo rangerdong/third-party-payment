@@ -16,7 +16,8 @@ class CreatePlatUserProfilesTable extends Migration
         Schema::create('plat_user_profiles', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('uid')->comment('商户id');
-            $table->tinyInteger('property')->comment('认证类型 0个人 1企业');
+            $table->tinyInteger('property')->comment('认证性质 0个人 1企业');
+            $table->tinyInteger('role')->comment('认证类型0商户 1代理');
             $table->string('realname', 100)->comment('真实姓名');
             $table->string('idcard', 18)->comment('身份证号码');
             $table->integer('scope')->comment('经营范围id');
