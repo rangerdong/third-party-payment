@@ -138,10 +138,8 @@ class PlatUserController extends Controller
                 0 => '未审核',
                 1 => '已审核'
             ])->default(0)->rules('required');
-            if ($form->model()->id) {
-                $form->display('key', '商户密钥')
-                    ->help("<a id='update-key'><i class='fa fa-refresh'></i> 更新密钥</a>", '');
-            }
+            $form->display('key', '商户密钥')
+                ->help("<a id='update-key' disabled=".($form->model()->id ? 'false': 'true')."><i class='fa fa-refresh'></i> 更新密钥</a>", '');
             $audit_status = [
                 0 => '未验证',
                 1 => '已验证',
