@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePlatUserAuditTable extends Migration
+class CreatePlatUserProfilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreatePlatUserAuditTable extends Migration
      */
     public function up()
     {
-        Schema::create('plat_user_profile', function (Blueprint $table) {
+        Schema::create('plat_user_profiles', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('uid')->comment('商户id');
             $table->tinyInteger('property')->comment('认证类型 0个人 1企业');
@@ -42,6 +42,6 @@ class CreatePlatUserAuditTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('plat_user_audit');
+        Schema::dropIfExists('plat_user_profiles');
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Hash;
+
 if (! function_exists('generateCode')) {
     function generateCode($password)
     {
@@ -12,8 +14,7 @@ if (! function_exists('generateCode')) {
 if (! function_exists('generateKey')) {
     function generateKey($code)
     {
-
-
+        return Hash::make($code);
     }
 
 }

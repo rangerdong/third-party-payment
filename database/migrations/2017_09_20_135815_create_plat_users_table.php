@@ -16,17 +16,11 @@ class CreatePlatUsersTable extends Migration
         Schema::create('plat_users', function (Blueprint $table) {
             $table->increments('id');
             //基本信息
+            $table->tinyInteger('role')->nullable()->comment('账户类型 0商户 1代理 2商务');
             $table->string('username', 100)->comment('登录名');
             $table->string('password')->comment('登录密码');
-            $table->string('email', 100)->nullable()->comment('邮箱号');
             $table->string('phone', 11)->nullable()->comment('手机号');
-//            $table->tinyInteger('type')->comment('账户类型 0个人 1企业');
             $table->tinyInteger('status')->default(0)->comment('账户状态 -1停用 0未审核 1已审核');
-//            $table->tinyInteger('audit_email')->default(0)->comment('邮箱认证0未认证 1已认证');
-//            $table->tinyInteger('audit_phone')->default(0)->comment('手机认证0未认证 1已认证');
-//            $table->tinyInteger('audit_realname')->default(0)->comment('实名认证0未认证 1已认证');
-//            $table->tinyInteger('audit_company')->default(0)->comment('企业认证0未认证 1已认证');
-//            $table->tinyInteger('audit_domains')->default(0)->comment('网址域名验证 0未验证 1已验证');
             $table->integer('pid')->default(0)->comment('认证资料id');
             $table->integer('sid')->default(0)->comment('结算信息id');
             //登录信息
@@ -35,11 +29,10 @@ class CreatePlatUsersTable extends Migration
             $table->integer('reg_ip')->default(0)->unsigned()->comment('注册ip');
 
             //账户类型信息
-            $table->string('code', 15)->comment('账户编码');
-            $table->string('key', 150)->comment('密钥');
-            $table->tinyInteger('role')->nullable()->comment('账户类型 0商户 1代理 2商务');
+            $table->string('code', 15)->nullable()->comment('账户编码');
+            $table->string('key', 150)->nullable()->comment('密钥');
             $table->integer('upper_id')->default(0)->comment('上级id 0无上级');
-            $table->string('trade_pwd')->comment('交易密码');
+            $table->string('trade_pwd')->nullable()->comment('交易密码');
 
             //风控信息
             $table->tinyInteger('is_withdraw')->default(0)->comment('是否允许提现 0不允许 1允许');
@@ -49,8 +42,8 @@ class CreatePlatUsersTable extends Migration
             $table->tinyInteger('settle_api')->default(0)->comment('结算api功能 0未开通 1开通');
             $table->tinyInteger('settle_cycle')->default(0)->comment('结算周期 t+');
             $table->tinyInteger('recharge_mode')->default(0)->comment('交易模式 0按个人 1按分组');
-            $table->integer('recharge_gid')->nullable()->comment('交易分组id');
-
+            $table->integer('recharge_gid')->default(0)->comment('交易分组id');
+            $table->string('remark', 500)->nullable()->comment('备注信息');
             $table->unique('username');
             $table->unique('code');
             $table->index('code');

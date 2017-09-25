@@ -29,6 +29,7 @@ Route::group([
 
     //平台用户管理
     $router->resource('/platusers', 'PlatUserController');
+    $router->resource('/profiles', 'PlatUserProfileController');
 
     $router->group(['prefix' => 'api'], function($r) {
         $r->get('getifs/{type}', 'ApiController@getIfsFromPm')->name('getifs');
