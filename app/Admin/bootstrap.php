@@ -20,3 +20,5 @@
 
 Encore\Admin\Form::forget(['map', 'editor']);
 Encore\Admin\Admin::js('/js/admin/splitmode/edit.js');
+Encore\Admin\Admin::css('vendor/layui/css/layui.css');
+Encore\Admin\Admin::js('vendor/layui/layui.js');

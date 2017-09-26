@@ -31,6 +31,7 @@ class CreatePlatUserProfilesTable extends Migration
             $table->string('img_license')->nullable()->comment('营业执照照片');
             $table->string('img_tax')->nullable()->comment('税务许可证');
             $table->string('img_permit')->nullable()->comment('文网文辅助文件');
+            $table->string('remark', 500)->nullable()->comment('备注信息');
             $table->unique('uid');
             $table->timestamps();
         });

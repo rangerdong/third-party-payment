@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Lib\Code;
 use App\Models\DictPayment;
 use App\Models\PlatUser;
+use App\Models\PlatUserProfile;
 use App\Models\RechargeGroup;
 use App\Models\RechargeGroupPayment;
 use App\Models\RechargeIf;
@@ -82,5 +83,25 @@ class ApiController extends Controller
         }
 
 
+    }
+
+    public function auditProfile(Request $request, $id)
+    {
+        $profile = PlatUserProfile::findOrFail($id);
+        $type = $request->input('type', null);
+        if ($type != null) {
+            if ($type == 'pass') {
+                $user = $profile->platuser;
+                $user->status = 1;
+                $user->save();
+            } elseif ($type == 'refuse') {
+                $reason = $request->input('reason', '审核信息未通过，请检查!');
+                $profile->remark = $reason;
+                $profile->save();
+            }
+            return ApiResponseService::success(Code::SUCCESS);
+        } else {
+            return ApiResponseService::showError(Code::HTTP_REQUEST_PARAM_ERROR);
+        }
     }
 }

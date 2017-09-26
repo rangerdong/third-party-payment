@@ -11,7 +11,9 @@
 <body>
 
 <div class="layui-form">
-    @if($type == 'realname')
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>实名资料</legend>
+    </fieldset>
     <div class="layui-form-item">
         <label class="layui-form-label">真实姓名</label>
         <div class="layui-input-block">
@@ -42,7 +44,10 @@
             <img src="{{$profile->img_id_back}}">
         </div>
     </div>
-    @else
+    @if($profile->property == 1)
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>企业资料</legend>
+    </fieldset>
     <div class="layui-form-item">
         <label class="layui-form-label">认证企业名</label>
         <div class="layui-input-block">
@@ -69,7 +74,6 @@
                 </div>
             </div>
         @endif
-
     @endif
 </div>
 
