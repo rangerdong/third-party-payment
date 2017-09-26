@@ -1,6 +1,8 @@
 <?php
 namespace App\Presenters\Admin;
 
+use App\Models\PlatUserProfile;
+
 class PlatUserPresenter
 {
     public static function showStatus($status):string
@@ -16,6 +18,11 @@ class PlatUserPresenter
                 return "<span class='label label-danger'>审核拒绝</span>"; break;
             default:break;
         }
+    }
+
+    public static function showProfile($profile_id)
+    {
+
     }
 }
 

@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Models\PlatUserProfile;
 
+use App\Presenters\Admin\PlatUserPresenter;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
@@ -71,6 +72,9 @@ class PlatUserProfileController extends Controller
      */
     protected function grid()
     {
+        Admin::js('vendor/layui/layui.js');
+        Admin::css('vendor/layui/css/layui.css');
+        Admin::js('js/admin/platuser/profile.js');
         return Admin::grid(PlatUserProfile::class, function (Grid $grid) {
 
             $grid->id('ID')->sortable();
@@ -82,15 +86,21 @@ class PlatUserProfileController extends Controller
                 return $role == 1 ? '代理' :'商户';
             });
             $grid->column('auth_profile', '实名资料')->display(function () {
-                return $this->realname. "<br/>".$this->idcard."<br/>手持证件照<br/>证件照背面<br/>证件照正面";
+                return "<a  class='show-profile' data-id='{$this->id}' data-type='realname'>".$this->realname. "<br/>".$this->idcard."<br/>手持证件照<br/>证件照背面<br/>证件照正面"."</a>";
             });
 //            $grid->column('scope', '经营范围');
             $grid->column('enterprise_profile', '企业认证资料')->display(function (){
-                return $this->enterprise . "<br/>经营范围";
+                return $this->property !=1 ? '-' : "<a class='show-profile' data-id='{$this->id}' data-type='enterprise'>".$this->enterprise . "<br/>经营范围</a>";
             });
-            $grid->column('platuser.status', '审核状态');
+            $grid->column('platuser.status', '用户状态')->display(function ($status) {
+                return PlatUserPresenter::showStatus($status);
+            });
             $grid->created_at('提交时间');
             $grid->disableCreation();
+            $grid->actions(function ($actions){
+                $actions->append();
+
+            });
         });
     }
 
@@ -108,5 +118,12 @@ class PlatUserProfileController extends Controller
             $form->display('created_at', 'Created At');
             $form->display('updated_at', 'Updated At');
         });
+    }
+
+    public function showProfile($id, $type)
+    {
+        $profile = PlatUserProfile::find($id);
+        return view('admin.platuser.profile', compact('profile', 'type'));
+
     }
 }

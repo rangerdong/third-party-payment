@@ -29,6 +29,7 @@ Route::group([
 
     //平台用户管理
     $router->resource('/platusers', 'PlatUserController');
+    $router->get('/profiles/{id}/{type}', 'PlatUserProfileController@showProfile');
     $router->resource('/profiles', 'PlatUserProfileController');
 
     $router->group(['prefix' => 'api'], function($r) {
