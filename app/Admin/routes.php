@@ -32,7 +32,7 @@ Route::group([
     $router->get('/profiles/detail/{id}', 'PlatUserProfileController@showProfile');
     $router->resource('/profiles', 'PlatUserProfileController');
 
-    $router->group(['prefix' => 'api', 'middleware' => 'web'], function($r) {
+    $router->group(['prefix' => 'api', 'middleware' => ['web']], function($r) {
         $r->get('getifs/{type}', 'ApiController@getIfsFromPm')->name('getifs');
         $r->get('group/{id}/pmadd', 'ApiController@addPayment')->name('group.pmadd');
         $r->get('group/rechargemode', 'ApiController@getRechargeMode')->name('group.rechargemode');

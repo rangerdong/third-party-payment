@@ -10,6 +10,7 @@ class PlatUser extends Model
     //
     protected $table = 'plat_users';
     protected $hidden = ['password'];
+    protected $guarded = [];
 
     protected static function boot()
     {

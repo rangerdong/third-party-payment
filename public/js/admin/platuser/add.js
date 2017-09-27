@@ -28,3 +28,45 @@ $('select[name=role], select[name=recharge_mode]').change(function () {
     }
 });
 
+//user profile 使用
+var global_group = '';
+$('select[name="platuser[recharge_mode]"]').change(function () {
+    var type = $(this).val();
+    var groups = $('select[name="platuser[recharge_gid]"]');
+    var single_group = "<option value=0 selected>个人分组</option>";
+    if (type == 0) {
+        global_group = groups.html();
+        groups.html(single_group);
+    } else {
+        groups.html(global_group);
+    }
+});
+
+function auditRefuse(id) {
+    swal({
+        title: '输入拒绝理由',
+        text: '请输入拒绝的详细理由',
+        type:'input',
+        showCancelButton: true,
+        closeOnConfirm: false,
+        showLoaderOnConfirm: true,
+        animation: "slide-from-top",
+        inputPlaceholder: "理由"
+    }, function (value) {
+        if (value === false) return false;
+        if (value === "") {
+            swal.showInputError('需要输入理由');
+            return false
+        }
+        $.post('/admin/api/profiles/audit/'+id, {'type':'refuse', 'reason': value}, function (data) {
+            if (data.code == 0) {
+                swal('资料审核已驳回', '', 'success');
+                window.location.href = '/admin/profiles';
+            } else {
+                swal('内部错误', data.message, 'error');
+            }
+        })
+    })
+
+}
+

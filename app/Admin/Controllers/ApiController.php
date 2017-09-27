@@ -90,12 +90,14 @@ class ApiController extends Controller
         $profile = PlatUserProfile::findOrFail($id);
         $type = $request->input('type', null);
         if ($type != null) {
+            $user = $profile->platuser;
             if ($type == 'pass') {
-                $user = $profile->platuser;
                 $user->status = 1;
                 $user->save();
             } elseif ($type == 'refuse') {
                 $reason = $request->input('reason', '审核信息未通过，请检查!');
+                $user->status = 2;
+                $user->save();
                 $profile->remark = $reason;
                 $profile->save();
             }

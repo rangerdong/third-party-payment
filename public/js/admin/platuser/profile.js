@@ -19,6 +19,7 @@ function auditPass(id) {
     $.post('/admin/api/profiles/audit/'+id, {'type' : 'pass'}, function (data) {
         if (data.code == 0) {
             swal('审核通过', '', 'success');
+            window.location.reload();
         } else {
             swal('内部错误', data.message, 'error');
         }
@@ -44,6 +45,7 @@ function auditRefuse(id) {
         $.post('/admin/api/profiles/audit/'+id, {'type':'refuse', 'reason': value}, function (data) {
             if (data.code == 0) {
                 swal('资料审核已驳回', '', 'success');
+                window.location.reload();
             } else {
                 swal('内部错误', data.message, 'error');
             }

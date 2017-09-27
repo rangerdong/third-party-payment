@@ -24,6 +24,7 @@ class CreatePlatUserProfilesTable extends Migration
             $table->string('enterprise', 255)->nullable()->comment('企业名称');
             $table->integer('city_id')->comment('城市id');
             $table->string('address', 255)->comment('详细地址');
+            $table->string('full_addr', 500)->comment('地址全名');
             $table->string('license', 50)->nullable()->comment('营业执照号');
             $table->string('img_id_hand')->comment('手持证件照');
             $table->string('img_id_front')->comment('正面证件照');
