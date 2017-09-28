@@ -17,6 +17,7 @@ class PlatUserController extends Controller
 {
     use ModelForm;
 
+    protected $user = null;
     /**
      * Index interface.
      *
@@ -24,6 +25,7 @@ class PlatUserController extends Controller
      */
     public function index()
     {
+
         return Admin::content(function (Content $content) {
 
             $content->header('平台用户管理 列表');
@@ -41,6 +43,8 @@ class PlatUserController extends Controller
      */
     public function edit($id)
     {
+        $this->user = PlatUser::find($id);
+
         return Admin::content(function (Content $content) use ($id) {
 
             $plat_user = PlatUser::find($id);
@@ -59,6 +63,7 @@ class PlatUserController extends Controller
      */
     public function create()
     {
+        $this->user = null;
         return Admin::content(function (Content $content) {
 
             $content->header('用户新增');
@@ -78,7 +83,7 @@ class PlatUserController extends Controller
         return Admin::grid(PlatUser::class, function (Grid $grid) {
 
             $grid->id('ID')->sortable();
-            $grid->column('profile.classify', '账户性质')->display(function ($type) {
+            $grid->column('profile.property', '账户性质')->display(function ($type) {
                 return $type === null ? '-' : ($type ? '企业' : '个人');
             });
             $grid->code('用户编号');
@@ -90,7 +95,7 @@ class PlatUserController extends Controller
             $grid->status('账户状态')->display(function ($status) {
                 return PlatUserPresenter::showStatus($status);
             });
-            $grid->column('upper.code', '上级用户')->display(function ($value) {
+            $grid->column('upper.username', '上级用户')->display(function ($value) {
                 return $value ? : '-';
             });
             $grid->created_at('注册时间');
@@ -106,8 +111,8 @@ class PlatUserController extends Controller
      */
     protected function form()
     {
-        Admin::js('js/admin/platuser/add.js');
         return Admin::form(PlatUser::class, function (Form $form) {
+            Admin::script('initSelect();');
 
             $form->tab('基本信息', function ($form) {
                 $form->display('code', '用户编号');
@@ -161,9 +166,18 @@ class PlatUserController extends Controller
                     ->options(RechargeGroup::where('classify', 0)
                         ->orderBy('is_default', 'desc')
                         ->pluck('name', 'id'))->rules('required');
+                if (($this->user && $this->user->role == 0) || $this->user === null) {
+                    $form->select('upper_id', '上级')
+                        ->options(array_merge(
+                            [0 => '无'],
+                            PlatUser::proxy()->audited()->get()->pluck('username', 'id')->toArray()
+                        ))->default(0);
+                }
             });
 
-
+            if ($this->user && $this->user->role == 1) {
+                $form->ignore(['upper_id']);
+            }
             $form->saving(function (Form $form) {
                 if ($form->password) {
                     $form->password = password_hash($form->password, PASSWORD_DEFAULT);

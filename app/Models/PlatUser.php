@@ -21,7 +21,17 @@ class PlatUser extends Model
 
     public function upper()
     {
-        return $this->hasOne(PlatUser::class, 'upper_id');
+        return $this->belongsTo(PlatUser::class, 'upper_id');
+    }
+
+    public function scopeProxy($query)
+    {
+        return $query->where('role', 1);
+    }
+
+    public function scopeAudited($query)
+    {
+        return $query->where('status', 1);
     }
 
     public function profile()

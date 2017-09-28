@@ -1,32 +1,35 @@
-$('select[name=role], select[name=recharge_mode]').change(function () {
+var initSelect = function () {
+    $('select[name=role], select[name=recharge_mode]').change(function () {
 
-    var role = $('select[name=role]').val();
-    var mode = $('select[name=recharge_mode]').val();
-    var group = $('select[name=recharge_gid]');
+        var role = $('select[name=role]').val();
+        var mode = $('select[name=recharge_mode]').val();
+        var group = $('select[name=recharge_gid]');
 
-    var id = $('input[name="id"]').val();
-    console.log(group, id, role, mode);
-    if (mode != 0) {
-        $.get('/admin/api/group/rechargemode', {'role': role, 'mode': mode, 'id': id}, function (data) {
-            if (data.code == 0) {
-                var groups = data.data.groups;
-                var len = groups.length;
-                var options = '';
-                console.log(groups);
-                if (len == 0) {
-                    options = '<option value="0"> 无分组 </option>';
-                } else {
-                    for (var i = 0; i < len; i++) {
-                        options += '<option value="' + groups[i].id + '"> ' + groups[i].name + '</option>';
+        var id = $('input[name="id"]').val();
+        if (mode != 0) {
+            $.get('/admin/api/group/rechargemode', {'role': role, 'mode': mode, 'id': id}, function (data) {
+                if (data.code == 0) {
+                    var groups = data.data.groups;
+                    var len = groups.length;
+                    var options = '';
+                    console.log(groups);
+                    if (len == 0) {
+                        options = '<option value="0" selected> 无分组 </option>';
+                    } else {
+                        for (var i = 0; i < len; i++) {
+                            options += groups[i]['is_default'] == 1
+                                ? '<option value="' + groups[i].id + '" selected> ' + groups[i].name + '</option>'
+                                : '<option value="' + groups[i].id + '"> ' + groups[i].name + '</option>';
+                        }
                     }
+                    group.html(options);
                 }
-                group.html(options);
-            }
-        })
-    } else {
-        group.html('<option value="0"> 个人分组 </option>');
-    }
-});
+            })
+        } else {
+            group.html('<option value="0" selected> 个人分组 </option>');
+        }
+    });
+}
 
 //user profile 使用
 var global_group = '';
@@ -42,7 +45,9 @@ $('select[name="platuser[recharge_mode]"]').change(function () {
     }
 });
 
-function auditRefuse(id) {
+function auditRefuse() {
+    var id = $("input[name=profile_id]").val();
+    console.log(id);
     swal({
         title: '输入拒绝理由',
         text: '请输入拒绝的详细理由',
@@ -69,4 +74,12 @@ function auditRefuse(id) {
     })
 
 }
+
+function updateButton() {
+    var submit = $('form button[type=submit]');
+    submit.text('审核通过并保存');
+    var refuse = '<div class="btn-group pull-left"><a onclick="auditRefuse()" class="btn btn-danger pull-left">审核拒绝</a></div>';
+    submit.parent().parent().append(refuse);
+}
+
 

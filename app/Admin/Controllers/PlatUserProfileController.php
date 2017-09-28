@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\PlatUser;
 use App\Models\PlatUserProfile;
 
 use App\Models\RechargeGroup;
@@ -18,6 +19,7 @@ use Illuminate\Routing\Route;
 class PlatUserProfileController extends Controller
 {
     use ModelForm;
+    protected $profile_id = null;
 
     /**
      * Index interface.
@@ -41,14 +43,15 @@ class PlatUserProfileController extends Controller
      * @param $id
      * @return Content
      */
-    public function edit(Request $request, $id)
+    public function edit($id)
     {
-        return Admin::content(function (Content $content) use ($id, $request) {
+        $this->profile_id = $id;
+        return Admin::content(function (Content $content) use ($id) {
 
             $content->header('header');
             $content->description('description');
 
-            $content->body($this->form($request)->edit($id));
+            $content->body($this->form()->edit($id));
         });
     }
 
@@ -60,7 +63,6 @@ class PlatUserProfileController extends Controller
     public function create()
     {
         return Admin::content(function (Content $content) {
-
             $content->header('header');
             $content->description('description');
 
@@ -75,8 +77,8 @@ class PlatUserProfileController extends Controller
      */
     protected function grid()
     {
-        Admin::js('js/admin/platuser/profile.js');
         return Admin::grid(PlatUserProfile::class, function (Grid $grid) {
+
 
             $grid->id('ID')->sortable();
             $grid->column('platuser.username', '商户账户');
@@ -116,10 +118,13 @@ class PlatUserProfileController extends Controller
      *
      * @return Form
      */
-    protected function form(Request $request)
+    protected function form()
     {
-        Admin::js('js/admin/platuser/add.js');
-        return Admin::form(PlatUserProfile::class, function (Form $form) use ($request) {
+        return Admin::form(PlatUserProfile::class, function (Form $form) {
+            $platuser = PlatUserProfile::find($this->profile_id)->platuser;
+            if ($platuser->status != 1) {
+                Admin::script('updateButton();');
+            }
 
             $form->tab('账户信息', function ($form) {
                 $form->display('id', 'ID');
@@ -144,11 +149,13 @@ class PlatUserProfileController extends Controller
                 $form->image('img_license', '企业工商信息照')->readOnly();
                 $form->image('img_tax', '税务信息照')->readOnly();
                 $form->image('img_permit', '文网文附件照')->readOnly();
-            })->tab('修改风控信息', function (Form $form) {
+            });
+            if ($platuser->status != 1) {
+                $form->tab('修改风控信息', function (Form $form) {
                     $form->radio('platuser.is_withdraw', '允许提现')->options([
                         0 => '不允许',
                         1 => '允许'
-                    ])->default(0);
+                    ])->default(0)->readOnly();
                     $form->radio('platuser.settle_type', '结算类型')->options([
                         0 => '平台结算',
                         1 => 'api结算'
@@ -179,28 +186,20 @@ class PlatUserProfileController extends Controller
                                 ->pluck('name', 'id');
                         })->rules('required');
 
-            });
-            $form->tools(function (Form\Tools $tools) use ($form, $request) {
+                });
+            }
+            $form->tools(function (Form\Tools $tools) use ($form) {
                 $tools->disableBackButton();
-                $tools->add(<<< eof
-<script type="text/javascript"> 
-$(function() {
-    var submit = $('form button[type=submit]')
-    submit.text('审核通过并保存'); 
-    var refuse = '<div class="btn-group pull-left">' +
-      '<a onclick="auditRefuse({$request->route('profile')})" class="btn btn-danger pull-left" data-loading-text="<i class=\'fa fa-spinner fa-spin \'></i> 提交">审核拒绝</a>' +
-      '</div>';
-    submit.parent().parent().append(refuse);
-})
-</script>
-eof
-                );
+                $tools->add("<input type='hidden' name='profile_id' value='{$this->profile_id}' />");
             });
             $form->ignore(['property', 'role']);
             $form->disableReset();
+            if ($platuser->status == 1) {
+                $form->disableSubmit();
+            }
             $form->saving(function (Form $form) {
                 $platuser = $form->model()->platuser;
-                $platuser->update($form->platuser);
+                $platuser->update(array_merge(['status' => 1], $form->platuser));
             });
         });
     }
