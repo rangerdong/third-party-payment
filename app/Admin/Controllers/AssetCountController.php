@@ -23,6 +23,11 @@ class AssetCountController extends Controller
      */
     public function index()
     {
+        if (PlatUser::count()  != AssetCount::count()) {
+            foreach (PlatUser::all() as $user) {
+                AssetCount::firstOrCreate(['uid' => $user->id]);
+            }
+        }
         return Admin::content(function (Content $content) {
 
             $content->header('用户资金管理');
@@ -76,6 +81,7 @@ class AssetCountController extends Controller
         return Admin::grid(AssetCount::class, function (Grid $grid) {
 
             $grid->id('ID')->sortable();
+            $grid->column('platuser.username', '用户账户');
             $grid->column('total','总资金')->sortable();
             $grid->column('available', '可用资金')->sortable();
             $grid->column('frozen', '总冻结');
@@ -96,6 +102,23 @@ class AssetCountController extends Controller
         return Admin::form(AssetCount::class, function (Form $form) {
 
             $form->display('id', 'ID');
+            $form->display('platuser.username', '用户账户');
+            $form->currency('total', '总资金')
+                ->options(['digits' => 4])
+                ->help('最大长度14位')
+                ->rules('required|max:15');
+            $form->currency('available', '可用资金')
+                ->options(['digits' => 4])
+                ->help('最大长度14位')
+                ->rules('required|max:15');
+            $form->currency('recharge_frozen', '交易冻结资金')
+                ->options(['digits' => 4])
+                ->help('最大长度14位')
+                ->rules('required|max:15');
+            $form->currency('settle_frozen', '结算冻结资金')
+                ->options(['digits' => 4])
+                ->help('最大长度14位')
+                ->rules('required|max:15');
 
             $form->display('created_at', 'Created At');
             $form->display('updated_at', 'Updated At');

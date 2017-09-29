@@ -115,7 +115,7 @@ class SettlementIfController extends Controller
                 1 => '开启',
                 0 => '关闭'
             ])->default(1);
-            $form->textarea('ext', '额外字段(json存储)')->rows(10);
+            $form->textarea('ext', '额外字段(json存储)')->rows(10)->rules('nullable|json');
             $form->display('created_at', 'Created At');
             $form->display('updated_at', 'Updated At');
         });
