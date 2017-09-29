@@ -53,4 +53,9 @@ class PlatUser extends Model
     {
         $this->attributes['last_ip'] = ip2long($ip);
     }
+
+    public function assets()
+    {
+        return $this->hasOne(AssetCount::class, 'uid');
+    }
 }

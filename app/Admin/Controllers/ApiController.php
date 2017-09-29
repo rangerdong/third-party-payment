@@ -37,7 +37,7 @@ class ApiController extends Controller
         }
     }
 
-    public function addPayment(Request $request, $group_id)
+    public function addPayment(Request $request, $type, $group_id)
     {
         $payment_id = $request->input('payment_id');
         try {
@@ -45,11 +45,11 @@ class ApiController extends Controller
             if ($payment_id == 0) {
                 $payments = DictPayment::recharge()->get();
                 foreach ($payments as $payment) {
-                    RechargeGroupService::addPayment($group_id, $payment->id);
+                    RechargeGroupService::addPayment($group_id, $payment->id, $type);
                 }
                 return ApiResponseService::success(Code::SUCCESS);
             } else {
-                if (RechargeGroupService::addPayment($group_id, $payment_id)) {
+                if (RechargeGroupService::addPayment($group_id, $payment_id, $type)) {
                     return ApiResponseService::success(Code::SUCCESS);
                 } else {
                     return ApiResponseService::showError(Code::FATAL_ERROR, '添加错误');

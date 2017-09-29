@@ -8,6 +8,7 @@ class RechargeSplitMode extends Model
 {
     //
     protected $table = 'recharge_split_modes';
+    protected $appends = ['full_name'];
 
     public function dictpayment()
     {
@@ -32,5 +33,11 @@ class RechargeSplitMode extends Model
     public function spareif()
     {
         return $this->belongsTo(RechargeIf::class, 'sp_if_id');
+    }
+
+    public function getFullNameAttribute()
+    {
+        $is_default = $this->attributes['is_default'] ? "[默认]":"";
+        return $is_default . $this->attributes['name'] . "({$this->attributes['rate']})";
     }
 }

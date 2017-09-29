@@ -21,6 +21,7 @@ class CreateRechargeSplitModesTable extends Migration
             $table->integer('sp_if_id')->default(0)->comment('备用接口');
             $table->decimal('rate', 5,3)->default(99)->comment('默认费率');
             $table->tinyInteger('is_default')->default(0)->comment('是否默认 0否 1默认');
+            $table->tinyInteger('settle_cycle')->default(0)->comment('结算周期 t+');
             $table->unique(['name', 'pm_id']);
             $table->softDeletes();
             $table->timestamps();

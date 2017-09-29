@@ -5,19 +5,21 @@ namespace App\Admin\Controllers;
 use App\Models\PlatUser;
 
 use App\Models\RechargeGroup;
+use App\Models\RechargeSplitMode;
 use App\Presenters\Admin\PlatUserPresenter;
+use App\Services\RechargePaymentsService;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use Illuminate\Http\Request;
 
 class PlatUserController extends Controller
 {
     use ModelForm;
 
-    protected $user = null;
     /**
      * Index interface.
      *
@@ -43,7 +45,6 @@ class PlatUserController extends Controller
      */
     public function edit($id)
     {
-        $this->user = PlatUser::find($id);
 
         return Admin::content(function (Content $content) use ($id) {
 
@@ -52,7 +53,7 @@ class PlatUserController extends Controller
             $content->header(" {$plat_user->username}修改");
             $content->description("{$plat_user->code}");
 
-            $content->body($this->form()->edit($id));
+            $content->body($this->form($id)->edit($id));
         });
     }
 
@@ -63,7 +64,6 @@ class PlatUserController extends Controller
      */
     public function create()
     {
-        $this->user = null;
         return Admin::content(function (Content $content) {
 
             $content->header('用户新增');
@@ -95,12 +95,18 @@ class PlatUserController extends Controller
             $grid->status('账户状态')->display(function ($status) {
                 return PlatUserPresenter::showStatus($status);
             });
+            $grid->column('recharge_mode', '分组模式')->display(function ($mode) {
+                return $mode == 0 ? '个人' : '['. RechargeGroup::find(PlatUser::find($this->getKey())->recharge_gid)->name.']';
+            });
             $grid->column('upper.username', '上级用户')->display(function ($value) {
-                return $value ? : '-';
+                return $this->role == 0 ? ($value ? : '-') : '-';
             });
             $grid->created_at('注册时间');
             $grid->last_at('上次登录时间');
             $grid->last_ip('上次登录ip');
+            $grid->actions(function ($actions) {
+                $actions->append('<a href="'.route('platusers.payments', $actions->getKey()).'"><i class="fa fa-sliders"></i> 通道分配</a>');
+            });
         });
     }
 
@@ -109,23 +115,23 @@ class PlatUserController extends Controller
      *
      * @return Form
      */
-    protected function form()
+    protected function form($id=null)
     {
-        return Admin::form(PlatUser::class, function (Form $form) {
+        return Admin::form(PlatUser::class, function (Form $form) use ($id){
             Admin::script('initSelect();');
+            $platuser = $id ? PlatUser::find($id):null;
 
-            $form->tab('基本信息', function ($form) {
+            $form->tab('基本信息', function ($form) use ($platuser, $id) {
                 $form->display('code', '用户编号');
-                $form->text('username', '登录邮箱')->placeholder('输入登录邮箱')
-                    ->rules(function ($form) {
-                        if (!$id = $form->model()->id) {
-                            return 'required|max:100|unique:plat_users,username|email';
-                        } else {
-                            return 'required|max:100|email';
-                        }
-                    });
+                if ($id) {
+                    $form->display('username', '用户账户');
+                } else {
+                    $form->text('username', '登录邮箱')->placeholder('输入登录邮箱')
+                        ->rules('required|max:100|unique:plat_users,username|email');
+                }
+
                 $form->text('password', '用户密码')
-                    ->placeholder($form->model()->id ? '输入新密码更改密码': '输入登录密码');
+                    ->placeholder($id ? '输入新密码更改密码': '输入登录密码');
                 $form->text('phone', '联系手机')->rules('required|regex:/^1[34578][0-9]{9}$/');
                 $form->select('status', '账户状态')->options([
                     -1 => '停用',
@@ -133,8 +139,8 @@ class PlatUserController extends Controller
                     1 => '已审核',
                     2 => '审核拒绝'
                 ])->default(0)->rules('required');
-            })->tab('风控信息', function ($form) {
-                $form->select('role', '用户角色')
+            })->tab('风控信息', function ($form) use ($platuser, $id) {
+                $form->select('role', '账户角色')
                     ->options(config('dictionary.user_roles'))
                     ->default(0);
                 $form->radio('is_withdraw', '允许提现')->options([
@@ -162,22 +168,22 @@ class PlatUserController extends Controller
                     0 => '按个人',
                     1 => '按分组'
                 ])->default(1)->rules('required');
+                $classify = $id ? $platuser->role : 0;
                 $form->select('recharge_gid', '交易分组')
-                    ->options(RechargeGroup::where('classify', 0)
-                        ->orderBy('is_default', 'desc')
-                        ->pluck('name', 'id'))->rules('required');
-                if (($this->user && $this->user->role == 0) || $this->user === null) {
-                    $form->select('upper_id', '上级')
-                        ->options(array_merge(
+                    ->options(
+                        RechargeGroup::where('classify', $classify)
+                            ->orderBy('is_default', 'desc')
+                            ->pluck('name', 'id')
+                    )->rules('required');
+                $form->select('upper_id', '上级')
+                    ->options(
+                        array_merge(
                             [0 => '无'],
                             PlatUser::proxy()->audited()->get()->pluck('username', 'id')->toArray()
-                        ))->default(0);
-                }
+                        )
+                    )->default(0)->rules('required')->help('账户角色为商户时上级有效');
             });
 
-            if ($this->user && $this->user->role == 1) {
-                $form->ignore(['upper_id']);
-            }
             $form->saving(function (Form $form) {
                 if ($form->password) {
                     $form->password = password_hash($form->password, PASSWORD_DEFAULT);
@@ -186,5 +192,10 @@ class PlatUserController extends Controller
                 }
             });
         });
+    }
+
+    public function payments(Request $request, $id)
+    {
+        return RechargePaymentsService::allocatePayments($request, $id, 'single');
     }
 }

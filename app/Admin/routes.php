@@ -25,18 +25,24 @@ Route::group([
 
     //交易分组
     $router->any('/group/{id}/payments', 'RechargeGroupController@payments')->name('group.payments');
-    $router->resource('/group/recharge', 'RechargeGroupController');
+    $router->resource('/group/recharge', 'RechargeGroupController')->names([
+        'index' => 'group.recharge.index'
+    ]);
+
 
     //平台用户管理
+    $router->any('/platusers/{id}/payments', 'PlatUserController@payments')->name('platusers.payments');
     $router->resource('/platusers', 'PlatUserController');
     $router->get('/profiles/detail/{id}', 'PlatUserProfileController@showProfile');
     $router->resource('/profiles', 'PlatUserProfileController');
+    $router->resource('/assets', 'AssetCountController');
 
     $router->group(['prefix' => 'api', 'middleware' => ['web']], function($r) {
         $r->get('getifs/{type}', 'ApiController@getIfsFromPm')->name('getifs');
-        $r->get('group/{id}/pmadd', 'ApiController@addPayment')->name('group.pmadd');
+        $r->get('{type}/{id}/pmadd', 'ApiController@addPayment')->name('group.pmadd');
         $r->get('group/rechargemode', 'ApiController@getRechargeMode')->name('group.rechargemode');
         $r->post('profiles/audit/{id}', 'ApiController@auditProfile')->name('profiles.audit');
+        $r->get('asset/refresh', 'ApiController@assetRefresh')->name('asset.refresh');
     });
 
 

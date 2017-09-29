@@ -15,6 +15,11 @@ class RechargeGroupPayment extends Model
         return $query->where('gid', $gid);
     }
 
+    public function scopeSingle($query, $uid)
+    {
+        return $query->where('uid', $uid);
+    }
+
     public function payment()
     {
         return $this->belongsTo(DictPayment::class, 'pm_id');

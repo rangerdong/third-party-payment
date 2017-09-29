@@ -20,6 +20,7 @@ class CreateRechargeGroupPaymentsTable extends Migration
             $table->integer('pm_id')->comment('通道id');
             $table->decimal('rate', 5, 3)->comment('商户费率');
             $table->integer('mode_id')->comment('处理模式id');
+            $table->integer('settle_cycle')->default(0)->comment('结算周期t+');
             $table->tinyInteger('status')->default(1)->comment('是否开启');
             $table->timestamps();
         });

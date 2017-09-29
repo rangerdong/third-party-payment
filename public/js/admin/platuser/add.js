@@ -29,6 +29,8 @@ var initSelect = function () {
             group.html('<option value="0" selected> 个人分组 </option>');
         }
     });
+
+    $("")
 }
 
 //user profile 使用

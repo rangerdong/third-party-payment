@@ -78,7 +78,10 @@ class RechargeSplitModeController extends Controller
             $grid->id('ID')->sortable();
             $grid->name('模式名称');
             $grid->column('dictpayment.name', '通道类型');
-            $grid->rate('费率')->sortable();
+            $grid->rate('接口商费率')->sortable();
+            $grid->column('settle_cycle', '默认结算周期')->display(function ($cycle) {
+                return 'T + '. $cycle;
+            });
             $grid->column('defaultif.name', '默认接口');
             $grid->column('spareif.name', '备用接口');
             $grid->is_default('是否默认')->display(function ($is_default) {
@@ -108,13 +111,14 @@ class RechargeSplitModeController extends Controller
             $form->text('name', '模式名称')->rules('required|max:100');
             $form->select('df_if_id', '默认接口商')->options($init_ifs)->rules('required');
             $form->select('sp_if_id', '备用接口商')->options($init_ifs);
-            $form->text('rate', '费率')->default(99.000)
+            $form->text('rate', '接口商费率')->default(99.000)
                 ->help('数值在99.999-0.001之间')
                 ->rules(['regex:/(^([0-9]{1,2}\.)([0-9]{1,3})$)|(^[0-9]{1,2}$)/']);
             $form->radio('is_default', '是否默认')->options([
                 0 => '否',
                 1 => '是'
             ])->default(0);
+            $form->text('settle_cycle', '结算周期')->default(0)->rules('required|integer');
 
             $form->display('created_at', 'Created At');
             $form->display('updated_at', 'Updated At');

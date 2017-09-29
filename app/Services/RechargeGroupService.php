@@ -37,20 +37,22 @@ class RechargeGroupService
 
     }
 
-    public static function addPayment($group_id, $payment_id)
+    public static function addPayment($group_id, $payment_id, $type='group')
     {
         $default_mode = RechargeSplitMode::payment($payment_id)
             ->default()
             ->first();
+        $type_id = $type == 'group' ? 'gid' : 'uid';
         if (RechargeGroupPayment::firstOrCreate(
             [
-                'gid' => $group_id,
+                $type_id => $group_id,
                 'pm_id' => $payment_id
             ],
             [
                 'rate' => $default_mode->rate,
                 'mode_id' => $default_mode->id,
-                'status' => $default_mode->dictpayment->status
+                'status' => $default_mode->dictpayment->status,
+                'settle_cycle' => $default_mode->settle_cycle
             ]
         )) {
             return true;
