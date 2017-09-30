@@ -11,6 +11,7 @@ use App\Models\RechargeGroupPayment;
 use App\Models\RechargeIf;
 use App\Models\RechargeIfPms;
 use App\Models\RechargeSplitMode;
+use App\Models\SettlementIf;
 use App\Services\ApiResponseService;
 use App\Services\RechargeGroupService;
 use Illuminate\Http\JsonResponse;
@@ -33,8 +34,18 @@ class ApiController extends Controller
             $arr = RechargeIf::whereHas('payments', function ($q) use ($pm_id){
                   $q->where('pm_id', $pm_id);
                 })->get(['id', 'name as text']);
-            return $arr;
+        } else {
+            if ($pm_id == 0) {
+                $arr = SettlementIf::whereHas('payments', function ($q) {
+                    $q->where('is_bank', 1);
+                })->get(['id', 'name as text']);
+            } else {
+                $arr = SettlementIf::whereHas('payments', function ($q) use ($pm_id) {
+                    $q->where('pm_id', $pm_id);
+                })->get(['id', 'name as text']);
+            }
         }
+        return $arr;
     }
 
     public function addPayment(Request $request, $type, $group_id)

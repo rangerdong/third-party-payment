@@ -101,7 +101,7 @@ class SettlementIfController extends Controller
             $form->display('id', 'ID');
             $form->select('if_id', '接口商')->options(DictInterface::all()->pluck('name', 'id'));
             $form->multipleSelect('payments', '支持通道')
-                ->options(DictPayment::all()->pluck('name', 'id'));
+                ->options(DictPayment::settle()->get()->pluck('name', 'id'));
             $form->text('name', '接口名称')->rules('required|max:255');
             $form->text('mc_id', '商户id')->rules('required|max:255');
             $form->text('mc_key', '商户密钥')->rules('required|max:255');

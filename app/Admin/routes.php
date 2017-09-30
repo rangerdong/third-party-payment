@@ -22,6 +22,7 @@ Route::group([
 
     //交易模式
     $router->resource('/splitmode/recharge', 'RechargeSplitModeController');
+    $router->resource('/splitmode/settle', 'SettleSplitModeController');
 
     //交易分组
     $router->any('/group/{id}/payments', 'RechargeGroupController@payments')->name('group.payments');
@@ -36,6 +37,10 @@ Route::group([
     $router->get('/profiles/detail/{id}', 'PlatUserProfileController@showProfile');
     $router->resource('/profiles', 'PlatUserProfileController');
     $router->resource('/assets', 'AssetCountController');
+
+
+    //系统配置
+    $router->resource('settings/bsscope', 'BusinessScopeController');
 
     $router->group(['prefix' => 'api', 'middleware' => ['web']], function($r) {
         $r->get('getifs/{type}', 'ApiController@getIfsFromPm')->name('getifs');

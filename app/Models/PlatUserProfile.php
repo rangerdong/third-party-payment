@@ -13,4 +13,14 @@ class PlatUserProfile extends Model
     {
         return $this->belongsTo(PlatUser::class, 'uid');
     }
+
+    public function city()
+    {
+        return $this->belongsTo(ProvinceCity::class, 'city_id');
+    }
+
+    public function getFullAddrAttribute()
+    {
+        return $this->city->province . $this->city->city . $this->attributes['address'];
+    }
 }

@@ -120,8 +120,6 @@ class AssetCountController extends Controller
                 ->help('最大长度14位')
                 ->rules('required|max:15');
 
-            $form->display('created_at', 'Created At');
-            $form->display('updated_at', 'Updated At');
         });
     }
 }

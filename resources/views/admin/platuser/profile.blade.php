@@ -55,6 +55,12 @@
         </div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">企业所在地</label>
+        <div class="layui-input-block">
+            <input type="text" name="full_addr" value="{{$profile->city->province . $profile->city->city . $profile->address}}" readonly="true" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">营业执照照片</label>
         <div class="layui-input-block">
             <img src="{{$profile->img_license}}">
