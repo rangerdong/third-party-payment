@@ -6,6 +6,7 @@ use App\Models\PlatUser;
 
 use App\Models\RechargeGroup;
 use App\Models\RechargeSplitMode;
+use App\Models\SettleGroup;
 use App\Presenters\Admin\PlatUserPresenter;
 use App\Services\RechargePaymentsService;
 use Encore\Admin\Form;
@@ -98,6 +99,9 @@ class PlatUserController extends Controller
             $grid->column('recharge_mode', '分组模式')->display(function ($mode) {
                 return $mode == 0 ? '个人' : '['. RechargeGroup::find(PlatUser::find($this->getKey())->recharge_gid)->name.']';
             });
+            $grid->column('settle_gid', '结算分组')->display(function ($gid) {
+                return $gid == 0 ? '无分组' : SettleGroup::find($gid)->name;
+            });
             $grid->column('upper.username', '上级用户')->display(function ($value) {
                 return $this->role == 0 ? ($value ? : '-') : '-';
             });
@@ -142,7 +146,8 @@ class PlatUserController extends Controller
             })->tab('风控信息', function ($form) use ($platuser, $id) {
                 $form->select('role', '账户角色')
                     ->options(config('dictionary.user_roles'))
-                    ->default(0);
+                    ->default(0)
+                    ->load('settle_gid', route('api.platuser.settlegroup'));
                 $form->radio('is_withdraw', '允许提现')->options([
                     0 => '不允许',
                     1 => '允许'
@@ -175,6 +180,11 @@ class PlatUserController extends Controller
                             ->orderBy('is_default', 'desc')
                             ->pluck('name', 'id')
                     )->rules('required');
+                $form->select('settle_gid', '结算分组')->options(
+                    SettleGroup::where('classify', $classify)
+                        ->orderBy('is_default', 'desc')
+                        ->pluck('name', 'id')
+                )->rules('required');
                 $form->select('upper_id', '上级')
                     ->options(
                         array_merge(

@@ -29,6 +29,9 @@ Route::group([
     $router->resource('/group/recharge', 'RechargeGroupController')->names([
         'index' => 'group.recharge.index'
     ]);
+    //结算分组
+    $router->resource('/group/settle', 'SettleGroupController');
+    $router->resource('/payments/settle', 'SettlePaymentController');
 
 
     //平台用户管理
@@ -43,11 +46,15 @@ Route::group([
     $router->resource('settings/bsscope', 'BusinessScopeController');
 
     $router->group(['prefix' => 'api', 'middleware' => ['web']], function($r) {
+        $r->get('platuser/settlegroup', 'ApiController@getSettleGroup')->name('api.platuser.settlegroup');
+        $r->get('splitmode/settle', 'ApiController@getSettleSplitMode')->name('api.splitmode.settle');
         $r->get('getifs/{type}', 'ApiController@getIfsFromPm')->name('getifs');
         $r->get('{type}/{id}/pmadd', 'ApiController@addPayment')->name('group.pmadd');
         $r->get('group/rechargemode', 'ApiController@getRechargeMode')->name('group.rechargemode');
         $r->post('profiles/audit/{id}', 'ApiController@auditProfile')->name('profiles.audit');
         $r->get('asset/refresh', 'ApiController@assetRefresh')->name('asset.refresh');
+
+        $r->post('payments/settle/addall', 'ApiController@addAllSettlePayment')->name('api.payment.settle.addall');
     });
 
 

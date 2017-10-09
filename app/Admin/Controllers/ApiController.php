@@ -11,11 +11,15 @@ use App\Models\RechargeGroupPayment;
 use App\Models\RechargeIf;
 use App\Models\RechargeIfPms;
 use App\Models\RechargeSplitMode;
+use App\Models\SettleGroup;
 use App\Models\SettlementIf;
+use App\Models\SettlePayment;
+use App\Models\SettleSplitMode;
 use App\Services\ApiResponseService;
 use App\Services\RechargeGroupService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
@@ -116,5 +120,51 @@ class ApiController extends Controller
         } else {
             return ApiResponseService::showError(Code::HTTP_REQUEST_PARAM_ERROR);
         }
+    }
+
+    public function getSettleGroup(Request $request)
+    {
+        $classify = $request->input('q');
+        $groups = SettleGroup::where('classify', $classify)->orderBy('is_default', 'desc')->get(['id', 'name as text']);
+        if (count($groups) == 0) {
+            $groups = [
+                [
+                    'id' => 0,
+                    'text' => '无对应分组'
+                ]
+            ];
+        }
+        return response()->json($groups);
+    }
+
+    public function getSettleSplitMode(Request $request)
+    {
+        $pm_id = $request->input('q');
+        $splitmodes = SettleSplitMode::where('pm_id', $pm_id)->get(['id', 'name as text']);
+        return response()->json($splitmodes);
+    }
+
+    public function addAllSettlePayment(Request $request)
+    {
+        $payments = DictPayment::settle()->get();
+        try {
+            foreach ($payments as $payment) {
+                SettlePayment::firstOrCreate(['dict_id' => $payment->id],
+                    [
+                        'support' => 0,
+                        'mode_id' => SettleSplitMode::where('pm_id', $payment->id)
+                            ->where('is_default', 1)
+                            ->first()
+                            ? SettleSplitMode::where('pm_id', $payment->id)
+                            ->where('is_default', 1)
+                            ->first()->id
+                            : 0
+                    ]
+                );
+            }
+        } catch (\Exception $exception) {
+            return ApiResponseService::showError(Code::FATAL_ERROR, $exception->getMessage());
+        }
+        return ApiResponseService::success(Code::SUCCESS);
     }
 }

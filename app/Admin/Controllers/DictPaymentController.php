@@ -84,6 +84,9 @@ class DictPaymentController extends Controller
             });
             $grid->order('排序ID')->sortable();
             $grid->disableExport();
+            $grid->actions(function ($actions) {
+                 $actions->disableDelete();
+            });
         });
     }
 

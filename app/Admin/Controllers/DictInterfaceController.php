@@ -76,7 +76,9 @@ class DictInterfaceController extends Controller
             $grid->id('ID')->sortable();
             $grid->name('接口商名称');
             $grid->identify('接口商编码');
-
+            $grid->actions(function ($actions) {
+                $actions->disableDelete();
+            });
 
         });
     }
