@@ -44,6 +44,7 @@ Route::group([
 
     //系统配置
     $router->resource('settings/bsscope', 'BusinessScopeController');
+    $router->resource('settings/province', 'ProvinceCityController');
 
     $router->group(['prefix' => 'api', 'middleware' => ['web']], function($r) {
         $r->get('platuser/settlegroup', 'ApiController@getSettleGroup')->name('api.platuser.settlegroup');
