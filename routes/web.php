@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::prefix(['domain' => env('GATEWAY_DOMAIN')], function ($router) {
+
+});

@@ -92,7 +92,12 @@ class ProvinceCityController extends Controller
 
             $form->display('id', 'ID');
             $form->select('parent', '省级')
-                ->options(array_merge([0 => '省级'], ProvinceCity::where('depth', 0)->get(['id', 'name as text'])));
+                ->options(array_merge(
+                    [0 => '省级'],
+                    ProvinceCity::where('depth', 0)
+                        ->get()
+                        ->pluck('name', 'id')->toArray())
+                );
             $form->text('name', '名称')->rules('required|max:200');
             $form->number('index', '序号')->default(0);
             $form->display('created_at', 'Created At');
