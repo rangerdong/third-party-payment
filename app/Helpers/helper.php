@@ -16,5 +16,29 @@ if (! function_exists('generateKey')) {
     {
         return Hash::make($code);
     }
+}
 
+if (! function_exists('generateAppCode')) {
+    /**
+     * @param  $classify
+     *
+     * @return string
+     *
+     */
+    function generateAppCode($classify)
+    {
+        $prefix = '';
+        switch ($classify) {
+            case 0:
+                $prefix = 'WEB'; break;
+            case 1:
+                $prefix = 'AD'; break;
+            case 2:
+                $prefix = 'IOS'; break;
+            default:break;
+        }
+        $salt = uniqid().time();
+        $str = md5($salt);
+        return $prefix.substr($str, 0, -strlen($prefix));
+    }
 }

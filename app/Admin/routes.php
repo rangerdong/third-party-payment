@@ -40,6 +40,7 @@ Route::group([
     $router->get('/profiles/detail/{id}', 'PlatUserProfileController@showProfile');
     $router->resource('/profiles', 'PlatUserProfileController');
     $router->resource('/assets', 'AssetCountController');
+    $router->resource('/apps', 'PlatUserAppController');
 
 
     //系统配置

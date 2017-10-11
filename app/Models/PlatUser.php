@@ -4,10 +4,13 @@ namespace App\Models;
 
 use App\Models\Observer\PlatUserObserver;
 use Illuminate\Database\Eloquent\Model;
+use Prettus\Repository\Contracts\Transformable;
+use Prettus\Repository\Traits\TransformableTrait;
 
-class PlatUser extends Model
+class PlatUser extends Model implements Transformable
 {
-    //
+    use TransformableTrait;
+
     protected $table = 'plat_users';
     protected $hidden = ['password'];
     protected $guarded = [];
@@ -18,6 +21,10 @@ class PlatUser extends Model
         PlatUser::observe(PlatUserObserver::class);
     }
 
+    public function apps()
+    {
+        return $this->hasMany(PlatUserApp::class, 'uid');
+    }
 
     public function upper()
     {

@@ -19,6 +19,7 @@ class CreateRechargeOrdersTable extends Migration
             $table->string('merchant_no', 32)->comment('商家订单号');
             $table->string('third_no', 50)->nullable()->comment('第三方订单号');
             $table->integer('uid')->comment('用户id');
+            $table->integer('app_id')->comment('appid');
             $table->integer('pm_id')->comment('通道id');
             $table->decimal('order_amt', 12, 2)->comment('平台订单号');
             $table->decimal('order_fee', 8, 4)->comment('订单手续费');
@@ -34,8 +35,13 @@ class CreateRechargeOrdersTable extends Migration
             $table->json('third_notify')->nullable()->comment('第三方通知数据');
             $table->tinyInteger('third_notify_time')->default(0)->comment('第三方通知次数');
             $table->tinyInteger('order_notify_time')->default(0)->comment('订单通知次数');
+            $table->integer('req_ip')->unsigned()->default(0)->comment('请求ip');
+            $table->tinyInteger('settle_day')->unsigned()->default(0)->comment('结算周期');
+            $table->tinyInteger('is_settle')->unsigned()->default(0)->comment('是否结算 0未结算1已结算');
+            $table->timestamp('settled_at')->nullable()->comment('结算时间');
             $table->softDeletes();
             $table->timestamps();
+            $table->index(['uid', 'app_id', 'merchant_no']);
             $table->unique('order_no');
             $table->unique('third_no');
             $table->unique('merchant_no');

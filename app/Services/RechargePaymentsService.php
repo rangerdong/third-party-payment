@@ -60,7 +60,7 @@ class RechargePaymentsService extends Controller
                                 )
                                 ->default($group_payment->mode_id)
                                 ->rules('required');
-                            $form->text('settle_cycle', '结算周期')->default($group_payment->settle_cycle);
+                            $form->text($variable.'settle_cycle', '结算周期')->default($group_payment->settle_cycle);
                             $form->radio($variable.'status', '通道状态')
                                 ->options([
                                     0 => '关闭',
@@ -121,7 +121,7 @@ class RechargePaymentsService extends Controller
                                 )
                                 ->default($group_payment->mode_id)
                                 ->rules('required');
-                            $form->text('settle_cycle', '结算周期')->default($group_payment->settle_cycle);
+                            $form->text($variable.'settle_cycle', '结算周期')->default($group_payment->settle_cycle);
                             $form->radio($variable.'status', '通道状态')
                                 ->options([
                                     0 => '关闭',

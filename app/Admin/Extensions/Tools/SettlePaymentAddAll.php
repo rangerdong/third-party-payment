@@ -33,15 +33,6 @@ $.ajax({
                 }
             }
         });
-//        swal({
-//  title: '添加中!',
-//  text: 'I will close in 5 seconds.',
-//  timer: 5000,
-//  onOpen: function () {
-//    
-//    swal.enableLoading()
-//  }
-//})
         
 });
 eot;
