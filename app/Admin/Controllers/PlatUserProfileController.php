@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Actions\AuditRow;
 use App\Models\PlatUser;
 use App\Models\PlatUserProfile;
 
@@ -102,11 +103,12 @@ class PlatUserProfileController extends Controller
             $grid->disableCreation();
             $grid->actions(function ($actions) {
                 $platuser = $this->row->platuser;
-                if ($platuser['status'] != 1) {
-                    $actions->append('<a title="审核通过"  onclick="auditPass('.$actions->getKey().')" data-type="pass" href="javascript:void(0);"><i class="fa fa-check-circle-o"></i></a>');
-                    if ($platuser['status'] != 2) {
-                        $actions->append('<a title="审核拒绝"  onclick="auditRefuse('.$actions->getKey().')" data-type="refuse" href="javascript:void(0);"><i class="fa fa-times-circle-o"></i> </a>');
-                    }
+                if ($platuser['status'] == 0) {
+                    $actions->append(new AuditRow(route('api.platuser.profiles.audit'), $this->getKey()));
+                } elseif ($platuser['status'] == 1) {
+                    $actions->append(new AuditRow(route('api.platuser.profiles.audit'), $this->getKey(), false, false));
+                } elseif ($platuser['status'] == 2) {
+                    $actions->append(new AuditRow(route('api.platuser.profiles.audit'), $this->getKey(), true, false));
                 }
 
             });

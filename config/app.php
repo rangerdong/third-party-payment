@@ -108,6 +108,10 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'website' => [
+        'GATEWAY_DOMAIN' => env('GATEWAY_DOMAIN'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Logging Configuration

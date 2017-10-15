@@ -21,7 +21,7 @@ class CreateRechargeOrdersTable extends Migration
             $table->integer('uid')->comment('用户id');
             $table->integer('app_id')->comment('appid');
             $table->integer('pm_id')->comment('通道id');
-            $table->decimal('order_amt', 12, 2)->comment('平台订单号');
+            $table->decimal('order_amt', 12, 2)->comment('订单金额');
             $table->decimal('order_fee', 8, 4)->comment('订单手续费');
             $table->decimal('order_settle', 12, 4)->comment('实际结算');
             $table->integer('proxy')->default(0)->comment('代理id');

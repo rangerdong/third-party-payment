@@ -15,6 +15,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::prefix(['domain' => env('GATEWAY_DOMAIN')], function ($router) {
+Route::group(['domain' => env('GATEWAY_DOMAIN'), 'namespace' => 'Gateway'], function ($router) {
+    $router->group(['prefix' => 'recharge'], function ($router) {
+        $router->any('pay', 'RechargeGatewayController@pay')->name('gateway.recharge.pay');
+    });
+});
 
+Route::get('recharge/pay', function () {
+    return view('gateway.recharge.pay');
 });

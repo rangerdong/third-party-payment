@@ -175,16 +175,18 @@ class PlatUserController extends Controller
                 ])->default(1)->rules('required');
                 $classify = $id ? $platuser->role : 0;
                 $form->select('recharge_gid', '交易分组')
-                    ->options(
-                        RechargeGroup::where('classify', $classify)
+                    ->options(function () use ($classify){
+                        $groups = RechargeGroup::where('classify', $classify)
                             ->orderBy('is_default', 'desc')
-                            ->pluck('name', 'id')
-                    )->rules('required');
-                $form->select('settle_gid', '结算分组')->options(
-                    SettleGroup::where('classify', $classify)
+                            ->pluck('name', 'id');
+                        return count($groups)? $groups: [0 => '无分组'];
+                    })->rules('required');
+                $form->select('settle_gid', '结算分组')->options(function() use ($classify) {
+                    $groups = SettleGroup::where('classify', $classify)
                         ->orderBy('is_default', 'desc')
-                        ->pluck('name', 'id')
-                )->rules('required');
+                        ->pluck('name', 'id');
+                    return  count($groups) ? $groups : [0 => '无分组'];
+                })->rules('nullable');
                 $form->select('upper_id', '上级')
                     ->options(
                         array_merge(

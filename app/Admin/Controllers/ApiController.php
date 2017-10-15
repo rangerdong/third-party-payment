@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Lib\Code;
 use App\Models\DictPayment;
 use App\Models\PlatUser;
+use App\Models\PlatUserApp;
 use App\Models\PlatUserProfile;
 use App\Models\RechargeGroup;
 use App\Models\RechargeGroupPayment;
@@ -100,10 +101,11 @@ class ApiController extends Controller
 
     }
 
-    public function auditProfile(Request $request, $id)
+    public function auditProfile(Request $request)
     {
-        $profile = PlatUserProfile::findOrFail($id);
-        $type = $request->input('type', null);
+        $pid = $request->input('id');
+        $type = $request->input('audit', null);
+        $profile = PlatUserProfile::findOrFail($pid);
         if ($type != null) {
             $user = $profile->platuser;
             if ($type == 'pass') {
@@ -164,6 +166,18 @@ class ApiController extends Controller
             }
         } catch (\Exception $exception) {
             return ApiResponseService::showError(Code::FATAL_ERROR, $exception->getMessage());
+        }
+        return ApiResponseService::success(Code::SUCCESS);
+    }
+
+    public function auditApp(Request $request)
+    {
+        $audit = $request->input('audit');
+        $id = $request->input('id');
+        if ($audit == 'pass') {
+            PlatUserApp::find($id)->update(['status' => 1]);
+        } else {
+            PlatUserApp::find($id)->update(['status' => 2, 'remark' => $request->input('reason', '应用审核未通过')]);
         }
         return ApiResponseService::success(Code::SUCCESS);
     }

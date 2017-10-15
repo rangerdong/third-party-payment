@@ -53,10 +53,12 @@ Route::group([
         $r->get('getifs/{type}', 'ApiController@getIfsFromPm')->name('getifs');
         $r->get('{type}/{id}/pmadd', 'ApiController@addPayment')->name('group.pmadd');
         $r->get('group/rechargemode', 'ApiController@getRechargeMode')->name('group.rechargemode');
-        $r->post('profiles/audit/{id}', 'ApiController@auditProfile')->name('profiles.audit');
+        $r->post('platuser/profiles/audit', 'ApiController@auditProfile')->name('api.platuser.profiles.audit');
         $r->get('asset/refresh', 'ApiController@assetRefresh')->name('asset.refresh');
 
         $r->post('payments/settle/addall', 'ApiController@addAllSettlePayment')->name('api.payment.settle.addall');
+
+        $r->post('platuser/app/audit', 'ApiController@auditApp')->name('api.platuser.app.audit');
     });
 
 

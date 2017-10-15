@@ -9,16 +9,25 @@ class AssetCount extends Model
     //
     protected $table = 'asset_accounts';
     protected $guarded = [];
-    protected $appends = ['frozen'];
+    protected $appends = ['total'];
 
     public function platuser()
     {
         return $this->belongsTo(PlatUser::class, 'uid');
     }
 
-    public function getFrozenAttribute()
+    public function getTotalAttribute()
     {
-        return bcadd($this->attributes['other_frozen'], bcadd($this->attributes['recharge_frozen'], $this->attributes['settle_frozen'], 4), 4);
+        return bcadd($this->attributes['available'],
+            bcadd(
+                $this->attributes['recharge_frozen'],
+                bcadd(
+                    $this->attributes['settle_frozen'],
+                    $this->attributes['other_frozen'],
+                    4
+                ),
+                4),
+            4);
     }
 
 }

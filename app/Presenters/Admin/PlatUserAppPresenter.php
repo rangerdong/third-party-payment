@@ -1,6 +1,8 @@
 <?php
 namespace App\Presenters\Admin;
 
+use App\Admin\Extensions\Actions\AuditRow;
+
 class PlatUserAppPresenter
 {
     public static function editHeaderAndDesc($app)
@@ -11,7 +13,7 @@ class PlatUserAppPresenter
         ];
     }
 
-    public static function showStatus($status):string
+    public static function showStatus($id, $status):string
     {
         switch ($status) {
             case 0:

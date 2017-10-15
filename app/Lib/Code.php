@@ -22,7 +22,8 @@ class Code {
 			self::FATAL_ERROR					=>	'接口错误,请联系管理员',
 			self::SIGN_ERROR 					=>	'签名错误',
 			self::HTTP_REQUEST_METHOD_ERROR		=>	'api请求方式错误',
-			self::HTTP_REQUEST_PARAM_ERROR		=>	'api请求参数错误'
+			self::HTTP_REQUEST_PARAM_ERROR		=>	'api请求参数错误',
+            self::SYSERROR                      =>  '内部错误'
 		);
 	}
 	

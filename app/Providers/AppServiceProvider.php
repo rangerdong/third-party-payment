@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Validator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,6 +15,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        Validator::extend('timestamp', function ($attribute, $value, $paramters, $validator) {
+             if ($value > time() - 5 * 60) {
+                 return true;
+             }
+             return false;
+        });
     }
 
     /**

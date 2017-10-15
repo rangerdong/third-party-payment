@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Actions\AuditRow;
 use App\Models\PlatUser;
 use \App\Models\PlatUserApp;
 
@@ -85,10 +86,21 @@ class PlatUserAppController extends Controller
                 return config('dictionary.user_apps.'.$classify);
             });
             $grid->column('status', '应用状态')->display(function ($status) {
-                return PlatUserAppPresenter::showStatus($status);
+                return PlatUserAppPresenter::showStatus($this->id, $status);
             });
             $grid->created_at();
             $grid->updated_at();
+            $grid->actions(function ($actions) {
+                $row = $actions->row;
+                if ($row['status'] == 0) {
+                    $actions->append(new AuditRow(route('api.platuser.app.audit'),$this->getKey()));
+                } elseif ($row['status'] == 1) {
+                    $actions->append(new AuditRow(route('api.platuser.app.audit'),$this->getKey(),  false, false));
+                } elseif ($row['status'] == 2) {
+                    $actions->append(new AuditRow(route('api.platuser.app.audit'),$this->getKey(), true, false));
+                }
+
+            });
         });
     }
 
@@ -109,13 +121,13 @@ class PlatUserAppController extends Controller
             }
             $form->display('app_id', '应用id');
             if ($id === null) {
-                $form->text('name', '应用名称');
+                $form->text('name', '应用名称')->rules('required|max:200');
                 $form->select('classify', '应用类型')->options(config('dictionary.user_apps'))->rules('required');
                 $form->text('domain', '应用域名/安卓签名/iosbundleid');
                 $form->text('icp', 'icp备案号/安卓包名');
             } else {
                 $form->display('name', '应用名称');
-                $form->select('classify', '应用类型')->options(config('dictionary.user_apps'))->readOnly();
+                $form->select('classify', '应用类型')->options(config('dictionary.user_apps'));
                 $form->display('domain', '应用域名/安卓签名/iosbundleid');
                 $form->display('icp', 'icp备案号/安卓包名');
             }
@@ -128,6 +140,9 @@ class PlatUserAppController extends Controller
 
             $form->display('created_at', 'Created At');
             $form->display('updated_at', 'Updated At');
+            if ($id) {
+                $form->ignore('classify');
+            }
             $form->saving(function ($form) use ($id){
                 if ($id === null) {
                     $form->app_id = generateAppCode($form->classify);

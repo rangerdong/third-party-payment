@@ -84,10 +84,10 @@ class AssetCountController extends Controller
             $grid->column('platuser.username', '用户账户');
             $grid->column('total','总资金')->sortable();
             $grid->column('available', '可用资金')->sortable();
-            $grid->column('frozen', '总冻结');
-            $grid->column('recharge_settle_other', '交易冻结/结算冻结/其他冻结')->display(function () {
-                return $this->recharge_frozen . '/' . $this->settle_frozen . '/' . $this->other_frozen;
+            $grid->column('recharge_settle', '交易冻结/结算冻结')->display(function () {
+                return $this->recharge_frozen . '/' . $this->settle_frozen;
             });
+            $grid->column('other_frozen', '其余冻结')->editable('text');
             $grid->disableCreation();
         });
     }
@@ -103,10 +103,7 @@ class AssetCountController extends Controller
 
             $form->display('id', 'ID');
             $form->display('platuser.username', '用户账户');
-            $form->currency('total', '总资金')
-                ->options(['digits' => 4])
-                ->help('最大长度14位')
-                ->rules('required|max:15');
+            $form->display('total', '总资金');
             $form->currency('available', '可用资金')
                 ->options(['digits' => 4])
                 ->help('最大长度14位')
@@ -116,6 +113,10 @@ class AssetCountController extends Controller
                 ->help('最大长度14位')
                 ->rules('required|max:15');
             $form->currency('settle_frozen', '结算冻结资金')
+                ->options(['digits' => 4])
+                ->help('最大长度14位')
+                ->rules('required|max:15');
+            $form->currency('other_frozen', '其他冻结资金')
                 ->options(['digits' => 4])
                 ->help('最大长度14位')
                 ->rules('required|max:15');
