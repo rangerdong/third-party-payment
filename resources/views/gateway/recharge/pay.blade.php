@@ -57,7 +57,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">商品描述</label>
         <div class="layui-input-block">
-            <textarea name="body" placeholder="请输入商品描述" class="layui-texterea"></textarea>
+            <textarea name="body" placeholder="请输入商品描述" class="layui-textarea"></textarea>
         </div>
     </div>
 
