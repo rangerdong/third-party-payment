@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Prettus\Validator\Exceptions\ValidatorException;
 
 class Handler extends ExceptionHandler
 {
@@ -48,6 +50,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+//        if ($request->getHost() == config('app.website.GATEWAY_DOMAIN')) {
+//            if ($exception instanceof ValidatorException) {
+//                return response()->json($exception->getMessageBag());
+//            }
+//        }
         return parent::render($request, $exception);
     }
 }

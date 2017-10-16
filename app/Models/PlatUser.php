@@ -41,6 +41,21 @@ class PlatUser extends Model implements Transformable
         return $query->where('status', 1);
     }
 
+    public function scopeNormal($query)
+    {
+        return $query->where('status', 1);
+    }
+
+    public function scopeBycode($query, $code)
+    {
+        return $query->where('code', $code);
+    }
+
+    public function scopeCanRecharge($query)
+    {
+        return $query->where('recharge_api', 1);
+    }
+
     public function profile()
     {
         return $this->hasOne(PlatUserProfile::class, 'uid');

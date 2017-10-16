@@ -23,7 +23,6 @@ class PlatUserRepositoryEloquent extends BaseRepository implements PlatUserRepos
         return PlatUser::class;
     }
 
-    
 
     /**
      * Boot up the repository, pushing criteria

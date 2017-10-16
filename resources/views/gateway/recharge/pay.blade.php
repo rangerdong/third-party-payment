@@ -22,7 +22,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">商户订单号</label>
         <div class="layui-input-block">
-            <input type="text" name="mch_no" placeholder="请输入商户订单号" class="layui-input">
+            <input type="text" name="mch_no" placeholder="请输入商户订单号" value="{{date('YmdHis').substr(time(), -3)}}" class="layui-input">
         </div>
     </div>
 
@@ -43,7 +43,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">充值方式</label>
         <div class="layui-input-block">
-            <input type="text" name="card_typee" placeholder="请输入加密方式" class="layui-input">
+            <input type="text" name="recharge_type" placeholder="请输入加密方式" class="layui-input">
         </div>
     </div>
 
@@ -57,7 +57,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">商品描述</label>
         <div class="layui-input-block">
-            <input type="text" name="body" placeholder="请输入商品描述" class="layui-input">
+            <textarea name="body" placeholder="请输入商品描述" class="layui-texterea"></textarea>
         </div>
     </div>
 

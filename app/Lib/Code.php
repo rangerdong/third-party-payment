@@ -1,7 +1,7 @@
 <?php
 namespace App\Lib;
 
-class Code {
+class Code extends AbstractCode {
 	const NORMAL_ERROR					= 1;				//报错
     const NOTAUTH                       = 403;              //无权访问
 	const NOTFOUND					    = 404;				//资源不存在

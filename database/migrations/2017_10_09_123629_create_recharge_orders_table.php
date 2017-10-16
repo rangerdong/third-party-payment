@@ -15,7 +15,7 @@ class CreateRechargeOrdersTable extends Migration
     {
         Schema::create('recharge_orders', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('order_no', 32)->comment('平台订单号');
+            $table->string('plat_no', 32)->comment('平台订单号');
             $table->string('merchant_no', 32)->comment('商家订单号');
             $table->string('third_no', 50)->nullable()->comment('第三方订单号');
             $table->integer('uid')->comment('用户id');
