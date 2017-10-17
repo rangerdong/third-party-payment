@@ -13,11 +13,11 @@ use App\Services\SignService;
 
 class RechargeGatewayService
 {
-    protected $platuser_service;
+    protected $platuserService;
 
     public function __construct()
     {
-        $this->platuser_service = new PlatUserService();
+        $this->platuserService = new PlatUserService();
     }
 
 
@@ -40,7 +40,7 @@ class RechargeGatewayService
         $user = PlatUser::bycode($mch_code)
             ->select('id', 'role', 'status', 'upper_id', 'key', 'code', 'settle_cycle', 'recharge_api', 'recharge_mode', 'recharge_gid')
             ->first();
-        $payment = $this->platuser_service->getRechargePayment($user, $payment);
+        $payment = $this->platuserService->getRechargePayment($user, $payment);
         return $payment;
     }
 }

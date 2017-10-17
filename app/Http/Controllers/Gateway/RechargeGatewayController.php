@@ -8,6 +8,7 @@ use App\Models\RechargeGroupPayment;
 use App\Services\ApiResponseService;
 use App\Services\Gateway\RechargeGatewayService;
 use App\Services\GatewayResponseService;
+use App\Services\RechargeOrderService;
 use App\Validators\RechargeGatewayValidator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -18,12 +19,15 @@ class RechargeGatewayController extends Controller
     //
     protected $validator;
     protected $service;
+    protected $orderService;
 
     public function __construct(RechargeGatewayValidator $rechargeGatewayValidator,
-                                RechargeGatewayService $rechargeGatewayService)
+                                RechargeGatewayService $rechargeGatewayService,
+                                RechargeOrderService $rechargeOrderService)
     {
         $this->validator = $rechargeGatewayValidator;
         $this->service = $rechargeGatewayService;
+        $this->orderService = $rechargeOrderService;
     }
 
     public function pay(Request $request)
@@ -38,7 +42,8 @@ class RechargeGatewayController extends Controller
             if ( ! $group_payment instanceof RechargeGroupPayment) {
                 return $group_payment;
             }
-            dd($group_payment);
+            $this->orderService->storeOrder($request, $group_payment);
+
 
 
         } catch (ValidatorException $exception) {

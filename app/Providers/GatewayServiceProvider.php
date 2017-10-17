@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\Gateway\RechargeGatewayService;
+use App\Services\PlatUserService;
 use Illuminate\Support\ServiceProvider;
 
 class GatewayServiceProvider extends ServiceProvider
