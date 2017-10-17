@@ -29,6 +29,7 @@ class GatewayCode extends AbstractCode
     const MCH_NO_DISABLED = 'MCH_NO_DISABLED';
     const MCH_NO_GATEWAY_DISABLED = 'MCH_NO_GATEWAY_DISABLED';
     const PAYMENT_DISABLED = 'PAYMENT_DISABLED';
+    const SIGN_NOT_MATCH = 'SIGN_NOT_MATCH';
 
     //max
     const MCH_NO_MAX = 'MAX_NO_MAX';
@@ -67,6 +68,7 @@ class GatewayCode extends AbstractCode
             self::MCH_NO_DISABLED => '此商户号状态异常，请联系客服人员',
             self::MCH_NO_GATEWAY_DISABLED => '此商户号无此接口权限，请联系客服人员开通',
             self::PAYMENT_DISABLED => '此通道已关闭',
+            self::SIGN_NOT_MATCH => '签名不正确，请详细按照文档组装参数',
 
             self::CALLBACK_URL_MAX => self::fieldMax('callback_url', 255),
             self::RETURN_RUL_MAX => self::fieldMax('return_url', 255),

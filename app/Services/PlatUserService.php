@@ -8,18 +8,15 @@ use App\Models\RechargeGroupPayment;
 class PlatUserService
 {
 
-    public function getPayment($user, $payment)
+    public function getRechargePayment($user, $payment)
     {
         if ($user->status != 1) {
-            return GatewayResponseService::getFieldError(['mch_code' => GatewayCode::MCH_NO_DISABLED]);
+            return GatewayResponseService::fieldError(['mch_code' => GatewayCode::MCH_NO_DISABLED]);
         }
         if ($user->recharge_api != 1) {
-            return GatewayResponseService::getFieldError(['mch_code' => GatewayCode::MCH_NO_GATEWAY_DISABLED]);
+            return GatewayResponseService::fieldError(['mch_code' => GatewayCode::MCH_NO_GATEWAY_DISABLED]);
         }
         $payment_permit = $this->getRechargePermit($user, $payment);
-        if ( ! $payment_permit instanceof RechargeGroupPayment) {
-            return $payment_permit;
-        }
         return $payment_permit;
     }
 
@@ -28,32 +25,16 @@ class PlatUserService
         $payment_permit = false;
         switch ($user->recharge_mode) {
             case 0:
-                $payment_permit = $this->getSingleRechargePermit($user, $payment);
+                $payment_permit = RechargeGroupPayment::single($user->id);
                 break;
             case 1:
-                $payment_permit = $this->getGroupRechargePermit($user, $payment);
+                $payment_permit = RechargeGroupPayment::group($user->recharge_gid);
                 break;
         }
-        return $payment_permit;
-    }
-
-    protected function getSingleRechargePermit($user, $payment)
-    {
-        $payment = RechargeGroupPayment::single($user->id)->payment()->where('pm_id', $payment->id)->first();
-        if ($payment && $payment->status == 1) {
-            return $payment;
+        $payment_permit = $payment_permit->where('pm_id', $payment->id)->first();
+        if ($payment_permit && $payment_permit->status == 1) {
+            return $payment_permit;
         }
-        return GatewayResponseService::getFieldError(GatewayCode::PAYMENT_DISABLED);
-
-
-    }
-
-    protected function getGroupRechargePermit($user, $payment)
-    {
-        $payment = RechargeGroupPayment::group($user->recharge_gid)->payment()->where('pm_id', $payment->id)->first();
-        if ($payment && $payment->status == 1) {
-            return $payment;
-        }
-        return GatewayResponseService::getFieldError(GatewayCode::PAYMENT_DISABLED);
+        return GatewayResponseService::fieldError(['recharge_type' => GatewayCode::PAYMENT_DISABLED]);
     }
 }

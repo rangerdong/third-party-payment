@@ -13,7 +13,7 @@ class RechargeGatewayValidator extends LaravelValidator
         'pay' => [
             'version' => ['sometimes', 'regex:^\d.[0-9]'],
             'mch_code' => 'required|exists:plat_users,code',
-            'order_time' => 'required|date|date_format:YmdHis|after: -5 minutes',
+            'order_time' => 'required|date|date_format:YmdHis|after: -30 minutes',
             'order_amt' => ['required', 'regex:[^([1-9][0-9]{0,14})?(0?\.\d{0,2})?$]'],
             'mch_no' => 'required|max:32|unique:recharge_orders,merchant_no',
             'body' => 'sometimes|max:500',

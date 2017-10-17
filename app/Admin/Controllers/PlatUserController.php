@@ -96,6 +96,11 @@ class PlatUserController extends Controller
             $grid->status('账户状态')->display(function ($status) {
                 return PlatUserPresenter::showStatus($status);
             });
+            $states = [
+                'on'  => ['value' => 1, 'text' => '开启', 'color' => 'primary'],
+                'off' => ['value' => 0, 'text' => '关闭', 'color' => 'default'],
+            ];
+            $grid->column('recharge_api', '支付api')->switch($states);
             $grid->column('recharge_mode', '分组模式')->display(function ($mode) {
                 return $mode == 0 ? '个人' : '['. RechargeGroup::find(PlatUser::find($this->getKey())->recharge_gid)->name.']';
             });
@@ -156,14 +161,12 @@ class PlatUserController extends Controller
                     0 => '平台结算',
                     1 => 'api结算'
                 ]);
-                $form->radio('recharge_api', '支付api功能')->options([
-                    0 => '未开通',
-                    1 => '已开通'
-                ]);
-                $form->radio('settle_api', '结算api功能')->options([
-                    0 => '未开通',
-                    1 => '已开通'
-                ]);
+                $states = [
+                    'on'  => ['value' => 1, 'text' => '开启', 'color' => 'primary'],
+                    'off' => ['value' => 0, 'text' => '关闭', 'color' => 'default'],
+                ];
+                $form->switch('recharge_api', '支付api功能')->states($states);
+                $form->switch('settle_api', '结算api功能')->states($states);
                 $form->select('settle_cycle', '结算周期')->options([
                     0 => 't+0',
                     1 => 't+1',
