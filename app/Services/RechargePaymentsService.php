@@ -1,7 +1,6 @@
 <?php
 namespace App\Services;
 
-use App\Http\Controllers\Controller;
 use App\Lib\Code;
 use App\Models\DictPayment;
 use App\Models\PlatUser;
@@ -13,7 +12,7 @@ use Encore\Admin\Layout\Content;
 use Encore\Admin\Layout\Row;
 use Illuminate\Http\Request;
 
-class RechargePaymentsService extends Controller
+class RechargePaymentsService
 {
     /**
      * @param \Illuminate\Http\Request $request

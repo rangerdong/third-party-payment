@@ -15,15 +15,15 @@ class RechargeGatewayService
 {
     protected $platuserService;
 
-    public function __construct()
+    public function __construct(PlatUserService $platUserService)
     {
-        $this->platuserService = new PlatUserService();
+        $this->platuserService = $platUserService;
     }
 
 
     public function verifySign($data)
     {
-        if ($data['sign_type'] == 'md5') {
+        if (array_key_exists('sign_type', $data) || $data['sign_type'] == 'md5') {
             return SignService::signMd5($data);
         }
     }

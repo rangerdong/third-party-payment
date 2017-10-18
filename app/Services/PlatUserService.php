@@ -2,11 +2,44 @@
 namespace App\Services;
 
 use App\Lib\GatewayCode;
+use App\Lib\MathCalculate;
+use App\Models\DictPayment;
 use App\Models\PlatUser;
 use App\Models\RechargeGroupPayment;
 
 class PlatUserService
 {
+
+    public function getUppersRateInfo($platuser, RechargeGroupPayment $payment)
+    {
+        $upper = [
+            'proxy' => 0,
+            'business' => 0,
+            'proxy_rate' => 0,
+            'business_rate' => 0,
+        ];
+        $upper_user = $this->getUpper($platuser); //获取上级信息
+        $payment = $payment->payment;
+        if ($upper_user instanceof PlatUser) {
+            if ($upper_user->role == 1) {
+                $upper['proxy'] = $upper_user->id;
+                $proxy_rate = $this->getRechargePaymentRate($upper_user, $payment);
+                $upper['proxy_rate'] = $proxy_rate;
+                $bs_upper = $this->getUpper($upper_user);
+                if ($bs_upper instanceof PlatUser) {
+                    $upper['business'] =  $bs_upper->id;
+                    $bs_rate = $this->getRechargePaymentRate($bs_upper, $payment);
+                    $upper['business_rate'] = $bs_rate;
+                }
+            } elseif ($upper_user->role == 2) {
+                $upper['business'] = $upper_user->id;
+                $bs_rate = $this->getRechargePaymentRate($upper_user, $payment);
+                $upper['business_rate'] = $bs_rate;
+            }
+        }
+        return $upper;
+    }
+
 
     public function getUpper($platuser)
     {
@@ -32,7 +65,7 @@ class PlatUserService
         return $upper;
     }
 
-    public function getRechargePayment($user, $payment)
+    public function getRechargePayment($user, DictPayment $payment)
     {
         if ($user->status != 1) {
             return GatewayResponseService::fieldError(['mch_code' => GatewayCode::MCH_NO_DISABLED]);
@@ -53,7 +86,7 @@ class PlatUserService
         return 0;
     }
 
-    public function getRechargePermit($user, $payment)
+    public function getRechargePermit($user,DictPayment $payment)
     {
         $payment_permit = false;
         switch ($user->recharge_mode) {

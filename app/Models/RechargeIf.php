@@ -23,4 +23,9 @@ class RechargeIf extends Model
         return $this->belongsToMany(DictPayment::class, 'recharge_if_pms',
             'if_id', 'pm_id')->withPivot(['rate']);
     }
+
+    public function scopeNormal($query)
+    {
+        return $query->where('status', 1);
+    }
 }

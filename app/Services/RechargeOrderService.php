@@ -1,42 +1,45 @@
 <?php
 namespace App\Services;
 
+use App\Lib\MathCalculate;
+use App\Lib\SystemNumber;
 use App\Models\PlatUser;
 use App\Models\RechargeGroupPayment;
 use Illuminate\Http\Request;
+use Ramsey\Uuid\Uuid;
 
 class RechargeOrderService
 {
     protected $platuserService;
+    protected $splitModeService;
 
-    public function __construct()
+    public function __construct(PlatUserService $platUserService, RechargeSplitModeService $rechargeSplitModeService)
     {
-        $this->platuserService = new PlatUserService();
+        $this->platuserService = $platUserService;
+        $this->splitModeService = $rechargeSplitModeService;
     }
 
 
     public function storeOrder(Request $request, RechargeGroupPayment $payment)
     {
         $platuser = $payment->platuser;
-        $upper = [
-            'proxy' => 0,
-            'business' => 0,
-            'proxy_fee' => 0,
-            'business_fee' => 0
-        ];
-        $upper_user = $this->platuserService->getUpper($platuser); //获取上级信息
-        if ($upper_user instanceof PlatUser) {
-            if ($upper_user->role == 1) {
-                $upper['proxy'] = $upper_user->id;
-                $proxy_rate = $this->platuserService->getRechargePaymentRate($upper_user, $payment);
-                $bs_upper = $this->platuserService->getUpper($upper_user);
-                if ($bs_upper instanceof PlatUser) {
-                    $upper['business'] =  $bs_upper->id;
-                    $bs_rate = $this->platuserService->getRechargePaymentRate($bs_upper, $payment);
-                }
-            } elseif ($upper_user->role == 2) {
-                $upper['business'] = $upper_user->id;
-            }
-        }
+        /**
+         * [
+         * 'proxy' =>
+         * 'business' =>
+         * 'proxy_rate' =>
+         * 'business_rate' =>
+         * ]
+         */
+        $upper = $this->platuserService->getUppersRateInfo($platuser, $payment);
+        $upper = $upper + ['proxy_settle' => MathCalculate::getSettleByRate($request->input('order_amt'), $upper['proxy_rate'])];
+        $upper = $upper + ['business_settle' => MathCalculate::getSettleByRate($request->input('order_amt'), $upper['business_rate'])];
+        $splitmode = $payment->splitmode;
+        $plat_no = SystemNumber::getRechargeOrderNumber();
+        $if = $this->splitModeService->getUsableInterfaceBySplitMode($splitmode);
+        dd($if);
+
+
+
     }
 }

@@ -190,15 +190,10 @@ class PlatUserController extends Controller
                         ->pluck('name', 'id');
                     return  count($groups) ? $groups : [0 => '无分组'];
                 })->rules('nullable');
+                $proxy = PlatUser::proxy()->audited()->where('id', '<>', $id)->get()->pluck('username', 'id')->toArray();
                 $form->select('upper_id', '上级')
-                    ->options(
-                        array_merge(
-                            [0 => '无'],
-                            PlatUser::proxy()->audited()->get()->pluck('username', 'id')->toArray()
-                        )
-                    )->default(0)->rules('required')->help('账户角色为商户时上级有效');
+                    ->options([0=>'无'] + $proxy)->default(0)->rules('required')->help('账户角色为商户时上级有效');
             });
-
             $form->saving(function (Form $form) {
                 if ($form->password) {
                     $form->password = password_hash($form->password, PASSWORD_DEFAULT);

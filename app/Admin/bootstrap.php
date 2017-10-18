@@ -23,6 +23,7 @@ Admin::js('/js/admin/splitmode/edit.js');
 Admin::css('/vendor/layui/css/layui.css');
 Admin::js('/vendor/layui/layui.js');
 Admin::js('/js/admin/platuser/add.js');
+Admin::js('/js/admin/platuser/profile.js');
 Admin::js('/js/admin/group/payment.js');
 
 

@@ -1,4 +1,5 @@
 function initPaymentsButton () {
+    console.log(window.location.href);
     $("select[name='payment']").on('change', function () {
         console.log($(this).val());
     });
@@ -30,7 +31,7 @@ function initPaymentsButton () {
             title:'保存中...',
             showConfirmButton: false
         });
-        $.post('', fields.serializeArray(), function (data) {
+        $.post(window.location.href, fields.serializeArray(), function (data) {
             if (data.code == 0) {
                 swal('保存成功', "全部保存成功", "success");
                 window.location.reload();

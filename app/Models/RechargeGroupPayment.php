@@ -25,6 +25,11 @@ class RechargeGroupPayment extends Model
         return $this->belongsTo(DictPayment::class, 'pm_id');
     }
 
+    public function platuser()
+    {
+        return $this->belongsTo(PlatUser::class, 'uid');
+    }
+
     public function splitmode()
     {
         return $this->belongsTo(RechargeSplitMode::class, 'mode_id');

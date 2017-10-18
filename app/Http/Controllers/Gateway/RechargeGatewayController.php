@@ -18,7 +18,7 @@ class RechargeGatewayController extends Controller
 {
     //
     protected $validator;
-    protected $service;
+    protected $gatewayService;
     protected $orderService;
 
     public function __construct(RechargeGatewayValidator $rechargeGatewayValidator,
@@ -26,7 +26,7 @@ class RechargeGatewayController extends Controller
                                 RechargeOrderService $rechargeOrderService)
     {
         $this->validator = $rechargeGatewayValidator;
-        $this->service = $rechargeGatewayService;
+        $this->gatewayService = $rechargeGatewayService;
         $this->orderService = $rechargeOrderService;
     }
 
@@ -35,19 +35,18 @@ class RechargeGatewayController extends Controller
         try {
             $data = $request->all();
             $this->validator->with($data)->passesOrFail('pay');
-            if ( ! $this->service->verifySign($data)) {
+            if ( ! $this->gatewayService->verifySign($data)) {
                 return GatewayResponseService::fieldError(['sign' => GatewayCode::SIGN_NOT_MATCH]);
             }
-            $group_payment = $this->service->getPayment($data);
+            $group_payment = $this->gatewayService->getPayment($data);
             if ( ! $group_payment instanceof RechargeGroupPayment) {
                 return $group_payment;
             }
             $this->orderService->storeOrder($request, $group_payment);
-
-
-
         } catch (ValidatorException $exception) {
             return GatewayResponseService::fieldError($exception->getMessageBag()->getMessages());
+        } catch (\Exception $exception) {
+            return GatewayResponseService::codeError(GatewayCode::SYSTEM_ERROR);
         }
     }
 }

@@ -39,6 +39,9 @@ class GatewayCode extends AbstractCode
     const MCH_CODE_MAX = 'MCH_CODE_MAX';
     const BODY_MAX = 'BODY_MAX';
 
+    //error
+    const SYSTEM_ERROR = 'SYSTEM_ERROR';
+
     public static function errMsg()
     {
         // TODO: Implement errMsg() method.
@@ -76,6 +79,8 @@ class GatewayCode extends AbstractCode
             self::MCH_NO_MAX => self::fieldMax('mch_no', 32),
             self::BODY_MAX => self::fieldMax('body', 500),
             self::APP_ID_MAX => self::fieldMax('app_id', 32),
+
+            self::SYSTEM_ERROR => '系统内部错误'
         ];
     }
 

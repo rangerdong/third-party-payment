@@ -3,9 +3,10 @@ namespace App\Lib;
 
 class MathCalculate
 {
-    public static function getFeeByRate($amt, $rate, $digits=6)
+    public static function getSettleByRate($amt, $rate, $digits=6)
     {
-        $amt = bcmul($amt, bcsub(1, bcdiv($rate, 100, 5), 5), $digits);
+        $amt = bcmul($amt, bcdiv($rate, 100, 5), $digits);
+        return $amt;
     }
 
 }
