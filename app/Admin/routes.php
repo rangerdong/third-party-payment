@@ -42,6 +42,9 @@ Route::group([
     $router->resource('/assets', 'AssetCountController');
     $router->resource('/apps', 'PlatUserAppController');
 
+    //订单管理
+    $router->resource('/orders/recharge', 'RechargeOrderController');
+
 
     //系统配置
     $router->resource('settings/bsscope', 'BusinessScopeController');

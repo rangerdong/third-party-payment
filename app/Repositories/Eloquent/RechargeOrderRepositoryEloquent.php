@@ -25,4 +25,9 @@ class RechargeOrderRepositoryEloquent extends BaseRepository implements Recharge
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
+    public function store($data)
+    {
+        $this->model->create($data);
+    }
+
 }

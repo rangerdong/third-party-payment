@@ -17,5 +17,45 @@ class RechargeOrder extends Model implements Transformable
     {
         return $this->belongsTo(PlatUser::class, 'uid');
     }
+
+    public function proxyUser()
+    {
+        return $this->belongsTo(PlatUser::class, 'proxy');
+    }
+
+    public function bsUser()
+    {
+        return $this->belongsTo(PlatUser::class, 'business');
+    }
+
+    public function upperIf()
+    {
+        return $this->belongsTo(RechargeIf::class, 'upper');
+    }
+
+    public function scopeBymchno($query, $merchant_no)
+    {
+        return $query->where('merchant_no', $merchant_no);
+    }
+
+    public function setReqIpAttribute($ip)
+    {
+        $this->attributes['req_ip'] = ip2long($ip);
+    }
+
+    public function getReqIpAttribute($ip)
+    {
+        return long2ip($ip);
+    }
+
+//    public function setOrderDataAttribute(array $data)
+//    {
+//        $this->attributes['order_data'] = json_encode($data);
+//    }
+//
+//    public function setThirdNotifyAttribute(array $data)
+//    {
+//        $this->attributes['third_notify'] = json_encode($data);
+//    }
     
 }

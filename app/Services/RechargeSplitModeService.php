@@ -7,7 +7,10 @@ class RechargeSplitModeService
 {
     public function getUsableInterfaceBySplitMode(RechargeSplitMode $splitMode)
     {
-        $default = $splitMode->defaultif()->normal()->first();
-
+        $if = $splitMode->defaultif()->normal()->first();
+        if (!$if) {
+            $if = $splitMode->spareif()->normal()->first();
+        }
+        return $if;
     }
 }
