@@ -13,6 +13,8 @@ abstract class RechargeAbstract implements AsyncCallback
     protected $mch_id;
     protected $mch_key;
     protected $parameters = [];
+    protected $identify;
+    protected $payment_map =[];
 
     public function __construct(RechargeIf $rechargeIf)
     {
@@ -21,6 +23,38 @@ abstract class RechargeAbstract implements AsyncCallback
         $this->mch_id = $rechargeIf->mc_id;
         $this->mch_key = $rechargeIf->mc_key;
     }
+
+    public function getMchId()
+    {
+        return $this->mch_id;
+    }
+
+    public function getMchKey()
+    {
+        return $this->mch_key;
+    }
+
+    public function getPayGateway()
+    {
+        return $this->gw_pay;
+    }
+
+    public function getQueryGateway()
+    {
+        return $this->gw_query;
+    }
+
+    public function getIdentify()
+    {
+        return $this->identify;
+    }
+
+    public function getPaymentMap($payment)
+    {
+        return $this->payment_map[$payment];
+    }
+
+    abstract function initPaymentMap($map);
 
     //支付接口
     abstract public function pay(array $data);
