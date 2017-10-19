@@ -28,19 +28,13 @@ class RechargeGatewayService
         }
     }
 
-    public function getPayment($data)
+    public function getPayment(PlatUser $platUser, $recharge_type)
     {
-        $mch_code = $data['mch_code'];
-        $recharge_type = $data['recharge_type'];
-
         $payment = DictPayment::where('identify', $recharge_type)->first();
         if ($payment && $payment->status != 1) {
             return GatewayResponseService::fieldError(['recharge_type' => GatewayCode::PAYMENT_DISABLED]);
         }
-        $user = PlatUser::bycode($mch_code)
-            ->select('id', 'role', 'status', 'upper_id', 'key', 'code', 'settle_cycle', 'recharge_api', 'recharge_mode', 'recharge_gid')
-            ->first();
-        $payment = $this->platuserService->getRechargePayment($user, $payment);
+        $payment = $this->platuserService->getRechargePayment($platUser, $payment);
         return $payment;
     }
 }

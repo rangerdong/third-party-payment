@@ -10,6 +10,16 @@ use App\Models\RechargeGroupPayment;
 class PlatUserService
 {
 
+    public function getUppersWithSettle($amt, $platuser, $payment)
+    {
+        $upper = $this->getUppersRateInfo($platuser, $payment);
+        $upper = $upper + ['proxy_settle' => MathCalculate::getSettleByRate($amt, $upper['proxy_rate'])];
+        $upper = $upper + ['business_settle' => MathCalculate::getSettleByRate($amt, $upper['business_rate'])];
+
+        return $upper;
+
+    }
+
     public function getUppersRateInfo($platuser, RechargeGroupPayment $payment)
     {
         $upper = [
