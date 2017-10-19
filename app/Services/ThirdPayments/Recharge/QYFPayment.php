@@ -1,5 +1,5 @@
 <?php
-namespace App\Services\Recharge\ThirdPayments;
+namespace App\Services\ThirdPayments\Recharge;
 
 
 use App\Models\DictPayment;
@@ -11,23 +11,46 @@ class QYFPayment extends RechargeAbstract
     public function callback(array $data)
     {
         // TODO: Implement callback() method.
+        if ($data['returncode'] != 0) {
+            return false;
+        }
+        if ($this->veryCallbackSign($data)) {
+            return ['plat_no' => $data['orderid']];
+        } else {
+            return false;
+        }
     }
 
     public function veryCallbackSign(array $data)
     {
         // TODO: Implement veryCallbackSign() method.
+        $signStr  = 'returncode=' . $data['returncode']  . '&';
+        $signStr .= 'userid='     . $this->getMchId()    . '&';
+        $signStr .= 'orderid='    . $data['orderid']     . '&';
+        $signStr .= 'money='      . $data['money']       . '&';
+        $signStr .= 'keyvalue='   . $this->getMchKey();
+
+        if ($data['sign'] == md5($signStr)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public function pay(array $data)
+    public function pay(array $data):string
     {
         // TODO: Implement pay() method.
         $this->setParameter('orderid', $data['plat_no']);
         $this->setParameter('money', $data['order_amt']);
-        $this->setParameter('hrefurl', route('gateway.recharge.callback', $this->getIdentify()));
-        $this->setParameter('url', route('gateway.recharge.callback'));
-        $this->setParameter('bankid', $this->getPaymentMap(DictPayment::find($data['pm_id'])->identify));
-        $this->setParameter('ext', $data['']);
+        $this->setParameter('hrefurl', $this->getCallbackUrl());
+        $this->setParameter('url', $this->getReturnUrl());
+        $this->setParameter('bankid', $this->getPaymentMap($data['recharge_type']));
+        $this->setParameter('ext', $data['order_data']['body']);
 
+        $sign = $this->paySign();
+
+        $this->setParameter('sign', $sign);
+        return $this->getPayGateway() .'?'. http_build_query($this->getParameters());
     }
 
     public function query(RechargeOrder $rechargeOrder)
@@ -50,7 +73,7 @@ class QYFPayment extends RechargeAbstract
         // TODO: Implement querySign() method.
     }
 
-    function initPaymentMap($map)
+    public function initPaymentMap()
     {
         // TODO: Implement initPaymentMap() method.
         $this->payment_map = [
@@ -60,5 +83,11 @@ class QYFPayment extends RechargeAbstract
             'alipay_wap' => 'zhifubao-wap',
             'bank' => 'wangyin'
         ];
+    }
+
+    public function showSuccess(): string
+    {
+        // TODO: Implement showSuccess() method.
+        return 'success';
     }
 }

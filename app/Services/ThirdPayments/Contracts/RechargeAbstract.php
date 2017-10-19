@@ -3,6 +3,7 @@ namespace App\Services\ThirdPayments\Contracts;
 
 
 
+use App\Lib\XDeode;
 use App\Models\RechargeIf;
 use App\Models\RechargeOrder;
 
@@ -15,13 +16,27 @@ abstract class RechargeAbstract implements AsyncCallback
     protected $parameters = [];
     protected $identify;
     protected $payment_map =[];
+    protected $recharge_if;
 
     public function __construct(RechargeIf $rechargeIf)
     {
+        $this->recharge_if = $rechargeIf;
         $this->gw_pay = $rechargeIf->gw_pay;
         $this->gw_query = $rechargeIf->qw_query;
         $this->mch_id = $rechargeIf->mc_id;
         $this->mch_key = $rechargeIf->mc_key;
+        $this->identify = $rechargeIf->ifdict->identify;
+        $this->initPaymentMap();
+    }
+
+    public function getCallbackUrl()
+    {
+        return route('gateway.recharge.callback', (new XDeode())->encode($this->recharge_if->id));
+    }
+
+    public function getReturnUrl()
+    {
+        return route('gateway.recharge.return');
     }
 
     public function getMchId()
@@ -54,7 +69,7 @@ abstract class RechargeAbstract implements AsyncCallback
         return $this->payment_map[$payment];
     }
 
-    abstract function initPaymentMap($map);
+    abstract function initPaymentMap();
 
     //支付接口
     abstract public function pay(array $data);
@@ -67,6 +82,9 @@ abstract class RechargeAbstract implements AsyncCallback
 
     //查询签名
     abstract public function querySign():string;
+
+    //异步回调处理成功后，正确信息显示
+    abstract public function showSuccess():string;
 
     /**
      * @param string $var

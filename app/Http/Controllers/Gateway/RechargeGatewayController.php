@@ -2,35 +2,42 @@
 
 namespace App\Http\Controllers\Gateway;
 
-use App\Lib\Code;
+use App\Jobs\SendRechargeCallback;
 use App\Lib\GatewayCode;
+use App\Lib\XDeode;
 use App\Models\PlatUser;
 use App\Models\RechargeGroupPayment;
-use App\Models\RechargeSplitMode;
-use App\Services\ApiResponseService;
+use App\Models\RechargeIf;
+use App\Models\RechargeOrder;
 use App\Services\Gateway\RechargeGatewayService;
 use App\Services\GatewayResponseService;
 use App\Services\RechargeOrderService;
 use App\Services\RechargeSplitModeService;
+use App\Services\ThirdPayments\Contracts\RechargePaymentFactory;
 use App\Validators\RechargeGatewayValidator;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Prettus\Validator\Exceptions\ValidatorException;
 
 class RechargeGatewayController extends Controller
 {
+    use DispatchesJobs;
     //
     protected $validator;
     protected $gatewayService;
     protected $orderService;
+    protected $rechargeFactory;
 
     public function __construct(RechargeGatewayValidator $rechargeGatewayValidator,
                                 RechargeGatewayService $rechargeGatewayService,
-                                RechargeOrderService $rechargeOrderService)
+                                RechargeOrderService $rechargeOrderService,
+                                RechargePaymentFactory $rechargePaymentFactory)
     {
         $this->validator = $rechargeGatewayValidator;
         $this->gatewayService = $rechargeGatewayService;
         $this->orderService = $rechargeOrderService;
+        $this->rechargeFactory = $rechargePaymentFactory;
     }
 
     public function pay(Request $request, RechargeSplitModeService $rechargeSplitModeService)
@@ -52,14 +59,39 @@ class RechargeGatewayController extends Controller
             if (! $recharge_if) {
                 return GatewayResponseService::codeError(GatewayCode::SYSTEM_ERROR);
             }
-            if ($this->orderService->storeOrder($request, $platuser, $group_payment, $recharge_if)) {
-
-            }
+            $orderInfo = $this->orderService->storeOrder($request, $platuser, $group_payment, $recharge_if);
+            $orderInfo['recharge_type'] = $data['recharge_type'];
+            $third_if = $this->rechargeFactory->getInstance($recharge_if);
+            return redirect($third_if->pay($orderInfo));
         } catch (ValidatorException $exception) {
             return GatewayResponseService::fieldError($exception->getMessageBag()->getMessages());
         } catch (\Exception $exception) {
             dd($exception->getMessage());
             return GatewayResponseService::codeError(GatewayCode::SYSTEM_ERROR);
+        }
+    }
+
+
+    public function callback(Request $request, $identify)
+    {
+        try{
+            $obj = new XDeode();
+            $id = $obj->decode($identify);
+            $third_if = $this->rechargeFactory->getInstance(RechargeIf::findOrFail($id));
+            echo $third_if->showSuccess();
+            $notify_data = $request->all();
+            $notify_info = $third_if->callback($notify_data);
+            if (is_array($notify_info)) {
+                $order = RechargeOrder::where('plat_no', $notify_info['plat_no'])->where('status', 0)->firstOrFail();
+                if ($order) {
+                    $order = $this->orderService->updateOrder($order,$notify_data, $notify_info);
+                    SendRechargeCallback::dispatch($order)->onQueue('recharge.callback');
+                }
+                return;
+            }
+            echo 'sign failed';
+        } catch (\Exception $exception) {
+            echo $exception->getMessage();
         }
     }
 }

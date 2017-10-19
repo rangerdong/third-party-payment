@@ -60,7 +60,7 @@ class RechargeOrderService
             'order_rate' => $payment->rate,
             'order_settle' => MathCalculate::getSettleByRate($order_amt, $payment->rate),
             'order_status' => 0,
-            'order_data' => json_encode($request->all()),
+            'order_data' => $request->all(),
             'upper' => $rechargeIf->id,
             'upper_rate' => RechargeIfPms::where('pm_id', $payment->pm_id)->where('if_id', $rechargeIf->id)->first()->rate,
             'req_ip' => $request->getClientIp(),
@@ -69,10 +69,60 @@ class RechargeOrderService
             'settled_at' => Carbon::now()->addDay($payment->settle_cycle)->toDateTimeString()
         ];
         $orderInfo = $orderInfo + $upper;
-        if ($this->orderRepository->store($orderInfo)) {
-            return true;
-        } else {
-            return false;
+//        if ($this->orderRepository->store($orderInfo)) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+        RechargeOrder::create($orderInfo);
+        return $orderInfo;
+    }
+
+
+    /**
+     * @param \App\Models\RechargeOrder $order
+     * @param array                     $notify_data 异步通知参数
+     * @param array                     $data        通知订单参数 ['plat_no' => 系统订单号, 'third_no' => 第三方订单号]
+     *
+     * @return \App\Models\RechargeOrder
+     */
+    public function updateOrder(RechargeOrder $order,
+                                array $notify_data,
+                                array $data)
+    {
+        $order->status = 1;
+        if (array_key_exists('third_no', $data)) {
+            $order->third_no = $data['third_no'];
         }
+        $order->third_notify = $notify_data;
+        $order->third_notify_time += 1;
+        $order->save();
+        return $order;
+    }
+
+
+    public function curlCallback(RechargeOrder $rechargeOrder)
+    {
+        $header = array("Content-Type:text/html;charset=utf-8");
+        $orderInfo = $rechargeOrder->order_data;
+        array_forget($orderInfo, 'sign');
+        $params = [
+            'err_code' => $rechargeOrder->order_status == 1 ? 0 : -1,
+
+        ];
+        $cur = curl_init();
+        curl_setopt($cur, CURLOPT_URL, $orderInfo['callback_url']);
+        curl_setopt($cur, CURLOPT_HEADER, 0);
+        curl_setopt($cur, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($cur, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($cur, CURLOPT_TIMEOUT, 30);
+        //https
+        curl_setopt($cur, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($cur, CURLOPT_SSL_VERIFYHOST, FALSE);
+
+        curl_setopt($cur, CURLOPT_POST, true);
+        curl_setopt($cur, CURLOPT_POSTFIELDS, $params);
+
+
     }
 }

@@ -12,6 +12,10 @@ class RechargeOrder extends Model implements Transformable
     //
     protected $table = 'recharge_orders';
     protected $guarded = [];
+    protected $casts = [
+        'order_data' => 'array',
+        'third_notify' => 'array'
+    ];
 
     public function platuser()
     {
@@ -53,9 +57,21 @@ class RechargeOrder extends Model implements Transformable
 //        $this->attributes['order_data'] = json_encode($data);
 //    }
 //
+//    public function getOrderDataAttribute($json_data)
+//    {
+//        return json_decode($json_data, true);
+//    }
+//
 //    public function setThirdNotifyAttribute(array $data)
 //    {
 //        $this->attributes['third_notify'] = json_encode($data);
 //    }
+//
+//    public function getThirdNotifyAttribute($json_data)
+//    {
+//        return json_decode($json_data, true);
+//    }
+
+
     
 }
