@@ -32,4 +32,9 @@ Route::group(['namespace' => 'Gateway\Page'], function ($r) {
         return view('gateway.recharge.pay');
     });
     $r->post('recharge/pay', 'RechargeController@pay');
+    $r->any('recharge/callback', 'RechargeController@callback')->name('page.callback');
+});
+
+Route::get('123', function () {
+    echo 'success';
 });

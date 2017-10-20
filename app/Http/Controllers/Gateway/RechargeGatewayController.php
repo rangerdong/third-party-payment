@@ -11,6 +11,7 @@ use App\Models\RechargeIf;
 use App\Models\RechargeOrder;
 use App\Services\Gateway\RechargeGatewayService;
 use App\Services\GatewayResponseService;
+use App\Services\RechargeOrderNotifyService;
 use App\Services\RechargeOrderService;
 use App\Services\RechargeSplitModeService;
 use App\Services\ThirdPayments\Contracts\RechargePaymentFactory;
@@ -72,7 +73,9 @@ class RechargeGatewayController extends Controller
     }
 
 
-    public function callback(Request $request, $identify)
+    public function callback(Request $request,
+                             RechargeOrderNotifyService $rechargeOrderNotifyService,
+                             $identify)
     {
         try{
             $obj = new XDeode();
@@ -80,16 +83,19 @@ class RechargeGatewayController extends Controller
             $third_if = $this->rechargeFactory->getInstance(RechargeIf::findOrFail($id));
             echo $third_if->showSuccess();
             $notify_data = $request->all();
-            $notify_info = $third_if->callback($notify_data);
+//            $notify_info = $third_if->callback($notify_data);
+            $notify_info = ['plat_no' => $notify_data['orderid']];
             if (is_array($notify_info)) {
-                $order = RechargeOrder::where('plat_no', $notify_info['plat_no'])->where('status', 0)->firstOrFail();
+                $order = RechargeOrder::where('plat_no', $notify_info['plat_no'])->where('order_status', 0)->first();
                 if ($order) {
-                    $order = $this->orderService->updateOrder($order,$notify_data, $notify_info);
-                    SendRechargeCallback::dispatch($order)->onQueue('recharge.callback');
+                    $order = $this->orderService->updateOrder($order, $notify_data, $notify_info);
+                    $notify = $rechargeOrderNotifyService->createNewNotify($order);
+                    SendRechargeCallback::dispatch($notify)->onQueue('recharge.callback');
+                    exit();
                 }
-                return;
+            } else {
+                echo 'sign failed';
             }
-            echo 'sign failed';
         } catch (\Exception $exception) {
             echo $exception->getMessage();
         }

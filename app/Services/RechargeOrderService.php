@@ -69,11 +69,6 @@ class RechargeOrderService
             'settled_at' => Carbon::now()->addDay($payment->settle_cycle)->toDateTimeString()
         ];
         $orderInfo = $orderInfo + $upper;
-//        if ($this->orderRepository->store($orderInfo)) {
-//            return true;
-//        } else {
-//            return false;
-//        }
         RechargeOrder::create($orderInfo);
         return $orderInfo;
     }
@@ -90,7 +85,7 @@ class RechargeOrderService
                                 array $notify_data,
                                 array $data)
     {
-        $order->status = 1;
+        $order->order_status = 1;
         if (array_key_exists('third_no', $data)) {
             $order->third_no = $data['third_no'];
         }
@@ -100,29 +95,4 @@ class RechargeOrderService
         return $order;
     }
 
-
-    public function curlCallback(RechargeOrder $rechargeOrder)
-    {
-        $header = array("Content-Type:text/html;charset=utf-8");
-        $orderInfo = $rechargeOrder->order_data;
-        array_forget($orderInfo, 'sign');
-        $params = [
-            'err_code' => $rechargeOrder->order_status == 1 ? 0 : -1,
-
-        ];
-        $cur = curl_init();
-        curl_setopt($cur, CURLOPT_URL, $orderInfo['callback_url']);
-        curl_setopt($cur, CURLOPT_HEADER, 0);
-        curl_setopt($cur, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($cur, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($cur, CURLOPT_TIMEOUT, 30);
-        //https
-        curl_setopt($cur, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($cur, CURLOPT_SSL_VERIFYHOST, FALSE);
-
-        curl_setopt($cur, CURLOPT_POST, true);
-        curl_setopt($cur, CURLOPT_POSTFIELDS, $params);
-
-
-    }
 }

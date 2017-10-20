@@ -71,7 +71,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">异步通知地址</label>
         <div class="layui-input-block">
-            <input type="text" name="callback_url" value="http://www.baidu.com" placeholder="请输入异步通知地址" class="layui-input">
+            <input type="text" name="callback_url" value="{{route('page.callback')}}" placeholder="请输入异步通知地址" class="layui-input">
         </div>
     </div>
 

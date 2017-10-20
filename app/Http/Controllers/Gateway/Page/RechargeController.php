@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Gateway\Page;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RechargeController extends Controller
 {
@@ -22,5 +23,11 @@ class RechargeController extends Controller
         $url = route('gateway.recharge.pay') . '?' . http_build_query($data);
         return redirect($url);
 
+    }
+
+    public function callback(Request $request)
+    {
+        return json_encode($request->all());
+        Log::info('异步通知:' . json_encode($request->all()));
     }
 }
