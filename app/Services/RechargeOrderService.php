@@ -105,7 +105,10 @@ class RechargeOrderService
     public function settleOrder(RechargeOrder $rechargeOrder)
     {
         if ($rechargeOrder->settle_day == 0) {
-            $this->assetCount->operateAsset($rechargeOrder->uid, 'add', $rechargeOrder->order_settle);
+            if ($this->assetCount->operateAsset($rechargeOrder->uid, 'add', $rechargeOrder->order_settle)) {
+                $rechargeOrder->is_settle = 1;
+                $rechargeOrder->save();
+            }
         } else {
             $this->assetCount->operateAsset($rechargeOrder->uid, 'rechargeFrozen', $rechargeOrder->order_settle);
         }
