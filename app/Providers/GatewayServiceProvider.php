@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\RechargeOrder;
 use App\Services\Gateway\RechargeGatewayService;
 use App\Services\PlatUserService;
 use App\Services\Recharge\ThirdPayments\Contracts\ThirdPaymentAbstract;
@@ -27,7 +28,8 @@ class GatewayServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('RechargeGateway', RechargeOrderService::class);
-        $this->app->bind('ThirdPaymentAbstract', ThirdPaymentAbstract::class);
+//        $this->app->bind('RechargeGateway', RechargeOrderService::class);
+//        $this->app->bind('ThirdPaymentAbstract', ThirdPaymentAbstract::class);
+        $this->app->bind('RechargeOrder', RechargeOrderService::class);
     }
 }

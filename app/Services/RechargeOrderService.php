@@ -1,7 +1,7 @@
 <?php
 namespace App\Services;
 
-use App\Lib\MathCalculate;
+use App\Lib\BCMathLib;
 use App\Lib\SystemNumber;
 use App\Models\PlatUser;
 use App\Models\RechargeGroupPayment;
@@ -9,6 +9,7 @@ use App\Models\RechargeIf;
 use App\Models\RechargeIfPms;
 use App\Models\RechargeOrder;
 use App\Models\RechargeSplitMode;
+use App\Repositories\Eloquent\AssetCountEloquent;
 use App\Repositories\Eloquent\RechargeOrderRepositoryEloquent;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,14 +20,20 @@ class RechargeOrderService
     protected $platuserService;
     protected $splitModeService;
     protected $orderRepository;
+    protected $assetCount;
+    protected $bcLib;
 
     public function __construct(PlatUserService $platUserService,
                                 RechargeSplitModeService $rechargeSplitModeService,
-                                RechargeOrderRepositoryEloquent $rechargeOrderRepositoryEloquent)
+                                RechargeOrderRepositoryEloquent $rechargeOrderRepositoryEloquent,
+                                AssetCountEloquent $assetCountEloquent,
+                                BCMathLib $BCMathLib)
     {
         $this->platuserService = $platUserService;
         $this->splitModeService = $rechargeSplitModeService;
         $this->orderRepository = $rechargeOrderRepositoryEloquent;
+        $this->assetCount = $assetCountEloquent;
+        $this->bcLib = $BCMathLib;
     }
 
 
@@ -58,7 +65,7 @@ class RechargeOrderService
             'pm_id' => $payment->pm_id,
             'order_amt' => $order_amt,
             'order_rate' => $payment->rate,
-            'order_settle' => MathCalculate::getSettleByRate($order_amt, $payment->rate),
+            'order_settle' => $this->bcLib->getSettleByRate($order_amt, $payment->rate),
             'order_status' => 0,
             'order_data' => $request->all(),
             'upper' => $rechargeIf->id,
@@ -93,6 +100,15 @@ class RechargeOrderService
         $order->third_notify_time += 1;
         $order->save();
         return $order;
+    }
+
+    public function settleOrder(RechargeOrder $rechargeOrder)
+    {
+        if ($rechargeOrder->settle_day == 0) {
+            $this->assetCount->operateAsset($rechargeOrder->uid, 'add', $rechargeOrder->order_settle);
+        } else {
+            $this->assetCount->operateAsset($rechargeOrder->uid, 'rechargeFrozen', $rechargeOrder->order_settle);
+        }
     }
 
 }

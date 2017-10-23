@@ -84,8 +84,8 @@ class AssetCountController extends Controller
             $grid->column('platuser.username', '用户账户');
             $grid->column('total','总资金')->sortable();
             $grid->column('available', '可用资金')->sortable();
-            $grid->column('recharge_settle', '交易冻结/结算冻结')->display(function () {
-                return $this->recharge_frozen . '/' . $this->settle_frozen;
+            $grid->column('recharge_settle', '交易冻结/提现冻结')->display(function () {
+                return $this->recharge_frozen . '/' . $this->withdraw_frozen;
             });
             $grid->column('other_frozen', '其余冻结')->editable('text');
             $grid->disableCreation();
@@ -105,21 +105,21 @@ class AssetCountController extends Controller
             $form->display('platuser.username', '用户账户');
             $form->display('total', '总资金');
             $form->currency('available', '可用资金')
-                ->options(['digits' => 4])
-                ->help('最大长度14位')
-                ->rules('required|max:15');
+                ->options(['digits' => 6])
+                ->help('最大长度16位')
+                ->rules('required|max:17');
             $form->currency('recharge_frozen', '交易冻结资金')
-                ->options(['digits' => 4])
-                ->help('最大长度14位')
-                ->rules('required|max:15');
-            $form->currency('settle_frozen', '结算冻结资金')
-                ->options(['digits' => 4])
-                ->help('最大长度14位')
-                ->rules('required|max:15');
+                ->options(['digits' => 6])
+                ->help('最大长度16位')
+                ->rules('required|max:17');
+            $form->currency('withdraw_frozen', '提现冻结资金')
+                ->options(['digits' => 6])
+                ->help('最大长度16位')
+                ->rules('required|max:17');
             $form->currency('other_frozen', '其他冻结资金')
-                ->options(['digits' => 4])
-                ->help('最大长度14位')
-                ->rules('required|max:15');
+                ->options(['digits' => 6])
+                ->help('最大长度16位')
+                ->rules('required|max:17');
 
         });
     }

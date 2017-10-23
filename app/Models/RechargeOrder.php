@@ -12,14 +12,21 @@ class RechargeOrder extends Model implements Transformable
     //
     protected $table = 'recharge_orders';
     protected $guarded = [];
+    protected $appends = ['origin_third_notify'];
     protected $casts = [
         'order_data' => 'array',
         'third_notify' => 'array'
     ];
 
+    // relationships
     public function platuser()
     {
         return $this->belongsTo(PlatUser::class, 'uid');
+    }
+
+    public function app()
+    {
+        return $this->belongsTo(PlatUserApp::class, 'app_id');
     }
 
     public function proxyUser()
@@ -37,11 +44,18 @@ class RechargeOrder extends Model implements Transformable
         return $this->belongsTo(RechargeIf::class, 'upper');
     }
 
+    public function notify()
+    {
+        return $this->hasOne(RechargeOrderNotify::class, 'order_id');
+    }
+
+    //scopes
     public function scopeBymchno($query, $merchant_no)
     {
         return $query->where('merchant_no', $merchant_no);
     }
 
+    //attributes
     public function setReqIpAttribute($ip)
     {
         $this->attributes['req_ip'] = ip2long($ip);
@@ -52,26 +66,10 @@ class RechargeOrder extends Model implements Transformable
         return long2ip($ip);
     }
 
-//    public function setOrderDataAttribute(array $data)
-//    {
-//        $this->attributes['order_data'] = json_encode($data);
-//    }
-//
-//    public function getOrderDataAttribute($json_data)
-//    {
-//        return json_decode($json_data, true);
-//    }
-//
-//    public function setThirdNotifyAttribute(array $data)
-//    {
-//        $this->attributes['third_notify'] = json_encode($data);
-//    }
-//
-//    public function getThirdNotifyAttribute($json_data)
-//    {
-//        return json_decode($json_data, true);
-//    }
+    public function getOriginThirdNotifyAttribute()
+    {
+        return json_encode($this->attributes['third_notify']);
+    }
 
 
-    
 }

@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Lib\XDeode;
 use App\Models\DictInterface;
 use App\Models\DictPayment;
 use App\Models\RechargeIf;
@@ -85,6 +86,9 @@ class RechargeIfController extends Controller
             $grid->column('ifdict.name', '接口商');
             $grid->status('接口状态')->display(function ($status) {
                 return $status ? '开启' : '关闭';
+            });
+            $grid->column('callback_url', '异步通知地址')->display(function () {
+                return  route('gateway.recharge.callback', (new XDeode())->encode($this->getKey()));
             });
 
             $grid->created_at();

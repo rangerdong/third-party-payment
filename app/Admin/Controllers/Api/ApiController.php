@@ -1,5 +1,5 @@
 <?php
-namespace App\Admin\Controllers;
+namespace App\Admin\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Lib\Code;
@@ -11,6 +11,8 @@ use App\Models\RechargeGroup;
 use App\Models\RechargeGroupPayment;
 use App\Models\RechargeIf;
 use App\Models\RechargeIfPms;
+use App\Models\RechargeOrder;
+use App\Models\RechargeOrderNotify;
 use App\Models\RechargeSplitMode;
 use App\Models\SettleGroup;
 use App\Models\SettlementIf;
@@ -18,6 +20,7 @@ use App\Models\SettlePayment;
 use App\Models\SettleSplitMode;
 use App\Services\ApiResponseService;
 use App\Services\RechargeGroupService;
+use App\Services\RechargeOrderNotifyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -180,5 +183,25 @@ class ApiController extends Controller
             PlatUserApp::find($id)->update(['status' => 2, 'remark' => $request->input('reason', '应用审核未通过')]);
         }
         return ApiResponseService::success(Code::SUCCESS);
+    }
+
+
+    public function rechargeCallback(Request $request, RechargeOrderNotifyService $rechargeOrderNotifyService)
+    {
+        $order_id = $request->input('id');
+        try {
+            $returnData = $rechargeOrderNotifyService->curlRequest(RechargeOrderNotify::byOrderId($order_id)->first(), 'post', true);
+            $content = '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">'.
+                '异步通知报告：<br>
+                目标地址：'.$returnData['rechargeOrderNotify']['notify_url'].'<br/>
+                传输方式：post
+                传递参数：<p style="word-break: break-all">'.$returnData['rechargeOrderNotify']['notify_body'].'</p>
+                服务器状态码：'.$returnData['res']['http_code'].'<br>
+                返回报文:<p style="word-break: break-all">'.$returnData['res']['body'].'</p></div>';
+            return ApiResponseService::returnData(compact('content'));
+        } catch (\Exception $exception) {
+            return ApiResponseService::showError(Code::FATAL_ERROR, $exception->getMessage());
+        }
+
     }
 }

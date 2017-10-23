@@ -19,6 +19,7 @@ use App\Validators\RechargeGatewayValidator;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Prettus\Validator\Exceptions\ValidatorException;
 
 class RechargeGatewayController extends Controller
@@ -67,7 +68,7 @@ class RechargeGatewayController extends Controller
         } catch (ValidatorException $exception) {
             return GatewayResponseService::fieldError($exception->getMessageBag()->getMessages());
         } catch (\Exception $exception) {
-            dd($exception->getMessage());
+//            dd($exception->getMessage());
             return GatewayResponseService::codeError(GatewayCode::SYSTEM_ERROR);
         }
     }
@@ -78,6 +79,7 @@ class RechargeGatewayController extends Controller
                              $identify)
     {
         try{
+            DB::beginTransaction();
             $obj = new XDeode();
             $id = $obj->decode($identify);
             $third_if = $this->rechargeFactory->getInstance(RechargeIf::findOrFail($id));
@@ -89,14 +91,17 @@ class RechargeGatewayController extends Controller
                 $order = RechargeOrder::where('plat_no', $notify_info['plat_no'])->where('order_status', 0)->first();
                 if ($order) {
                     $order = $this->orderService->updateOrder($order, $notify_data, $notify_info);
+                    $this->orderService->settleOrder($order);
                     $notify = $rechargeOrderNotifyService->createNewNotify($order);
                     SendRechargeCallback::dispatch($notify)->onQueue('recharge.callback');
+                    DB::commit();
                     exit();
                 }
             } else {
                 echo 'sign failed';
             }
         } catch (\Exception $exception) {
+            DB::rollback();
             echo $exception->getMessage();
         }
     }

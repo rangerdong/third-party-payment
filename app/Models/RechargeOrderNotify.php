@@ -13,4 +13,9 @@ class RechargeOrderNotify extends Model
     {
         return $this->belongsTo(RechargeOrder::class, 'order_id');
     }
+
+    public function scopeByOrderId($query, $order_id)
+    {
+        return $query->where('order_id', $order_id);
+    }
 }

@@ -11,6 +11,7 @@ class RechargeIf extends Model
     use SoftDeletes;
 
     protected $table = 'recharge_ifs';
+    protected $appends = ['identify'];
     protected $dates = ['deleted_at'];
 
     public function ifdict()
@@ -27,5 +28,10 @@ class RechargeIf extends Model
     public function scopeNormal($query)
     {
         return $query->where('status', 1);
+    }
+
+    public function getIdentifyAttribute()
+    {
+        return $this->ifdict->identify;
     }
 }

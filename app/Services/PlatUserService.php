@@ -2,19 +2,25 @@
 namespace App\Services;
 
 use App\Lib\GatewayCode;
-use App\Lib\MathCalculate;
+use App\Lib\BCMathLib;
 use App\Models\DictPayment;
 use App\Models\PlatUser;
 use App\Models\RechargeGroupPayment;
 
 class PlatUserService
 {
+    protected $bcLib;
+
+    public function __construct(BCMathLib $BCMathLib)
+    {
+        $this->bcLib = $BCMathLib;
+    }
 
     public function getUppersWithSettle($amt, $platuser, $payment)
     {
         $upper = $this->getUppersRateInfo($platuser, $payment);
-        $upper = $upper + ['proxy_settle' => MathCalculate::getSettleByRate($amt, $upper['proxy_rate'])];
-        $upper = $upper + ['business_settle' => MathCalculate::getSettleByRate($amt, $upper['business_rate'])];
+        $upper = $upper + ['proxy_settle' => $this->bcLib->getSettleByRate($amt, $upper['proxy_rate'])];
+        $upper = $upper + ['business_settle' => $this->bcLib->getSettleByRate($amt, $upper['business_rate'])];
 
         return $upper;
 

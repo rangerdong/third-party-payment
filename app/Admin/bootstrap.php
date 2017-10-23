@@ -22,6 +22,7 @@ Encore\Admin\Form::forget(['map', 'editor']);
 Admin::js('/js/admin/splitmode/edit.js');
 Admin::css('/vendor/layui/css/layui.css');
 Admin::js('/vendor/layui/layui.js');
+//Admin::js('/vendor/layui/lay/modules/layer.js');
 Admin::js('/js/admin/platuser/add.js');
 Admin::js('/js/admin/platuser/profile.js');
 Admin::js('/js/admin/group/payment.js');

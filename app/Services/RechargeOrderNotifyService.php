@@ -50,8 +50,14 @@ class RechargeOrderNotifyService
     }
 
 
-
-    public function curlRequest(RechargeOrderNotify $rechargeOrderNotify, $method='post'):bool
+    /**
+     * @param \App\Models\RechargeOrderNotify $rechargeOrderNotify
+     * @param string                          $method
+     * @param bool                            $returnData
+     *
+     * @return array|bool
+     */
+    public function curlRequest(RechargeOrderNotify $rechargeOrderNotify, $method='post', $returnData=false)
     {
         $res = $this->getCurlRequest($rechargeOrderNotify, $method);
 
@@ -62,10 +68,10 @@ class RechargeOrderNotifyService
         if ($res['http_code'] == 200 && $res['body'] == 'success') {
             $rechargeOrderNotify->status = 1;
             $rechargeOrderNotify->save();
-            return true;
+            return $returnData ? compact('res', 'rechargeOrderNotify'): true;
         } else {
             $rechargeOrderNotify->save();
-            return false;
+            return $returnData ? compact('res', 'rechargeOrderNotify'): false;
         }
 
     }

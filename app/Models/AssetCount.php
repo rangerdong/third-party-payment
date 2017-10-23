@@ -16,18 +16,24 @@ class AssetCount extends Model
         return $this->belongsTo(PlatUser::class, 'uid');
     }
 
+    //scopes
+    public function scopeByUserId($query, $uid)
+    {
+        return $query->where('uid', $uid);
+    }
+
     public function getTotalAttribute()
     {
         return bcadd($this->attributes['available'],
             bcadd(
                 $this->attributes['recharge_frozen'],
                 bcadd(
-                    $this->attributes['settle_frozen'],
+                    $this->attributes['withdraw_frozen'],
                     $this->attributes['other_frozen'],
-                    4
+                    6
                 ),
-                4),
-            4);
+                6),
+            6);
     }
 
 }

@@ -50,7 +50,7 @@ Route::group([
     $router->resource('settings/bsscope', 'BusinessScopeController');
     $router->resource('settings/province', 'ProvinceCityController');
 
-    $router->group(['prefix' => 'api', 'middleware' => ['web']], function($r) {
+    $router->group(['prefix' => 'api', 'namespace' => 'Api', 'middleware' => ['web']], function($r) {
         $r->get('platuser/settlegroup', 'ApiController@getSettleGroup')->name('api.platuser.settlegroup');
         $r->get('splitmode/settle', 'ApiController@getSettleSplitMode')->name('api.splitmode.settle');
         $r->get('getifs/{type}', 'ApiController@getIfsFromPm')->name('getifs');
@@ -62,6 +62,8 @@ Route::group([
         $r->post('payments/settle/addall', 'ApiController@addAllSettlePayment')->name('api.payment.settle.addall');
 
         $r->post('platuser/app/audit', 'ApiController@auditApp')->name('api.platuser.app.audit');
+
+        $r->post('order/recharge/callback', 'ApiController@rechargeCallback')->name('api.order.recharge.callback');
     });
 
 
