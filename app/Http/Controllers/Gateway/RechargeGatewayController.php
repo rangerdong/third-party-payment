@@ -67,9 +67,9 @@ class RechargeGatewayController extends Controller
             }
             $orderInfo = $this->orderService->storeOrder($request, $platuser, $group_payment, $recharge_if);
             $third_if = $this->rechargeFactory->getInstance($recharge_if);
-            if ($third_if instanceof QRCapable) {
-                dd($third_if->qrCode());
-            }
+//            if ($third_if instanceof QRCapable) {
+//                dd($third_if->pay($orderInfo));
+//            }
             return redirect($third_if->pay($orderInfo));
         } catch (ValidatorException $exception) {
             return GatewayResponseService::fieldError($exception->getMessageBag()->getMessages());

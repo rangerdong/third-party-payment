@@ -9,7 +9,7 @@ use App\Services\ThirdPayments\Contracts\RechargeAbstract;
 
 class ECPSSPayment extends RechargeAbstract implements QRCapable
 {
-    protected $bankGateway = 'https://gwapi.yemadai.com/pay/sslpaymen';
+    protected $bankGateway = 'https://gwapi.yemadai.com/pay/sslpayment';
     protected $qrCodeGateway = "https://gwapi.yemadai.com/pay/scanpay";
     protected $appGateway = 'https://gwapi.yemadai.com/pay/apppay';
 
@@ -43,6 +43,7 @@ class ECPSSPayment extends RechargeAbstract implements QRCapable
         if (in_array($mchData['recharge_type'], ['weixin', 'alipay'])) {
             return $this->qrCode();
         } elseif (in_array($mchData['recharge_type'], ['bank', 'bank_wap'])) {
+            $this->setPayGateway($this->bankGateway);
             return $this->getPayGateway() . '?' . http_build_query($this->getParameters());
         }
     }
