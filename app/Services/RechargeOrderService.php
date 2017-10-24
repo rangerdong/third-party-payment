@@ -76,8 +76,8 @@ class RechargeOrderService
             'settled_at' => Carbon::now()->addDay($payment->settle_cycle)->toDateTimeString()
         ];
         $orderInfo = $orderInfo + $upper;
-        RechargeOrder::create($orderInfo);
-        return $orderInfo;
+        $info = RechargeOrder::create($orderInfo);
+        return $info;
     }
 
 
@@ -107,6 +107,7 @@ class RechargeOrderService
         if ($rechargeOrder->settle_day == 0) {
             if ($this->assetCount->operateAsset($rechargeOrder->uid, 'add', $rechargeOrder->order_settle)) {
                 $rechargeOrder->is_settle = 1;
+                $rechargeOrder->settled_at = Carbon::now()->toDateTimeString();
                 $rechargeOrder->save();
             }
         } else {

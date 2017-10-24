@@ -37,15 +37,15 @@ class QYFPayment extends RechargeAbstract
         }
     }
 
-    public function pay(array $data):string
+    public function pay(RechargeOrder $rechargeOrder):string
     {
         // TODO: Implement pay() method.
-        $this->setParameter('orderid', $data['plat_no']);
-        $this->setParameter('money', $data['order_amt']);
+        $this->setParameter('orderid', $rechargeOrder->plat_no);
+        $this->setParameter('money', $rechargeOrder->order_amt);
         $this->setParameter('hrefurl', $this->getCallbackUrl());
         $this->setParameter('url', $this->getReturnUrl());
-        $this->setParameter('bankid', $this->getPaymentMap($data['recharge_type']));
-        $this->setParameter('ext', $data['order_data']['body']);
+        $this->setParameter('bankid', $this->getPaymentMap($rechargeOrder->order_data['recharge_type']));
+        $this->setParameter('ext', $rechargeOrder->order_data['body']);
 
         $sign = $this->paySign();
 

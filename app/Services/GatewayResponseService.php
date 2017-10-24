@@ -49,6 +49,7 @@ class GatewayResponseService
 
     /**
      * @param $code
+     * @param $msg
      *
      * @return \Illuminate\Http\JsonResponse
      *
@@ -64,13 +65,13 @@ class GatewayResponseService
      *   }
      * }
      */
-    public static function codeError($code)
+    public static function codeError($code, $msg = '')
     {
         $result = [
             'status' => 500,
             'messages' => [
                 'err_code' => $code,
-                'err_msg' => GatewayCode::getErrorMsg($code)
+                'err_msg' => $msg ? $msg: GatewayCode::getErrorMsg($code)
             ]
         ];
         return response()->json($result);

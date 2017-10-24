@@ -54,6 +54,12 @@ abstract class RechargeAbstract implements AsyncCallback
         return $this->gw_pay;
     }
 
+    public function setPayGateway($gateway)
+    {
+        $this->gw_pay = $gateway;
+        return $this;
+    }
+
     public function getQueryGateway()
     {
         return $this->gw_query;
@@ -69,10 +75,16 @@ abstract class RechargeAbstract implements AsyncCallback
         return $this->payment_map[$payment];
     }
 
+
+    /**
+     *  todo: change the $this->payment_map variable
+     *
+     * @return mixed
+     */
     abstract function initPaymentMap();
 
     //支付接口
-    abstract public function pay(array $data);
+    abstract public function pay(RechargeOrder $rechargeOrder);
 
     //查询接口
     abstract public function query(RechargeOrder $rechargeOrder);

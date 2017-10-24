@@ -2,9 +2,12 @@
 
 namespace App\Exceptions;
 
+use App\Lib\GatewayCode;
+use App\Services\GatewayResponseService;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 use Prettus\Validator\Exceptions\ValidatorException;
 
 class Handler extends ExceptionHandler
@@ -38,6 +41,9 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
+        if ($exception instanceof RechargeGatewayException) {
+            Log::info($exception);
+        }
         parent::report($exception);
     }
 
@@ -46,15 +52,14 @@ class Handler extends ExceptionHandler
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function render($request, Exception $exception)
     {
-//        if ($request->getHost() == config('app.website.GATEWAY_DOMAIN')) {
-//            if ($exception instanceof ValidatorException) {
-//                return response()->json($exception->getMessageBag());
-//            }
-//        }
+        if ($request->getHost() == config('app.website.GATEWAY_DOMAIN')) {
+            return GatewayResponseService::codeError(GatewayCode::SYSTEM_ERROR, $exception->getMessage());
+        }
         return parent::render($request, $exception);
     }
 }

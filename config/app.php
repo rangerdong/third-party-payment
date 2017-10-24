@@ -183,6 +183,7 @@ return [
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
 
         \App\Providers\GatewayServiceProvider::class,
+        \App\Providers\RechargeGatewayLogServiceProvider::class,
 
     ],
 
@@ -232,6 +233,9 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+
+
+        'RechargeLog' => App\Facades\RechargeLog::class,
 
     ],
 

@@ -3,8 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Validator;
-use Prettus\Repository\Providers\RepositoryServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

@@ -12,7 +12,8 @@ class Code extends AbstractCode {
     const SIGN_ERROR 					= 40001;			//参数sign错误
     const HTTP_REQUEST_METHOD_ERROR		= 40002;			//请求method错误
     const HTTP_REQUEST_PARAM_ERROR		= 40003;			//请求参数错误
-
+    const RECHARGE_THIRD_LOG            = 10001;            //充值第三方错误代码
+    const RECHARGE_MCH_LOG              = 10002;            //充值商户错误代码
 
 	public static function errMsg() {
 		return array(

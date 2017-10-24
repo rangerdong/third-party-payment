@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Gateway;
 
+use App\Exceptions\RechargeGatewayException;
+use App\Facades\RechargeLog;
 use App\Jobs\SendRechargeCallback;
 use App\Lib\GatewayCode;
 use App\Lib\XDeode;
@@ -14,12 +16,14 @@ use App\Services\GatewayResponseService;
 use App\Services\RechargeOrderNotifyService;
 use App\Services\RechargeOrderService;
 use App\Services\RechargeSplitModeService;
+use App\Services\ThirdPayments\Contracts\QRCapable;
 use App\Services\ThirdPayments\Contracts\RechargePaymentFactory;
 use App\Validators\RechargeGatewayValidator;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Prettus\Validator\Exceptions\ValidatorException;
 
 class RechargeGatewayController extends Controller
@@ -62,14 +66,16 @@ class RechargeGatewayController extends Controller
                 return GatewayResponseService::codeError(GatewayCode::SYSTEM_ERROR);
             }
             $orderInfo = $this->orderService->storeOrder($request, $platuser, $group_payment, $recharge_if);
-            $orderInfo['recharge_type'] = $data['recharge_type'];
             $third_if = $this->rechargeFactory->getInstance($recharge_if);
+            if ($third_if instanceof QRCapable) {
+                dd($third_if->qrCode());
+            }
             return redirect($third_if->pay($orderInfo));
         } catch (ValidatorException $exception) {
             return GatewayResponseService::fieldError($exception->getMessageBag()->getMessages());
         } catch (\Exception $exception) {
-//            dd($exception->getMessage());
-            return GatewayResponseService::codeError(GatewayCode::SYSTEM_ERROR);
+            RechargeLog::common('INFO', $exception);
+            return GatewayResponseService::codeError(GatewayCode::SYSTEM_ERROR, $exception->getMessage());
         }
     }
 

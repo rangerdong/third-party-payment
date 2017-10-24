@@ -18,6 +18,7 @@ class RechargeGatewayValidator extends LaravelValidator
             'mch_no' => 'required|max:32|unique:recharge_orders,merchant_no',
             'body' => 'sometimes|max:500',
             'recharge_type' => ['required', 'exists:dict_payments,identify,is_bank,0'],
+            'bank_code' => 'sometimes|exists:dict_payments,identify,is_bank,1',
             'app_id' => 'required|max:32|exists:plat_user_apps,app_id',
             'callback_url' => 'required|max:255|url',
             'return_url' => 'sometimes|max:255|url',
