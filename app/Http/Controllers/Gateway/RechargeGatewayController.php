@@ -6,6 +6,7 @@ use App\Exceptions\RechargeGatewayException;
 use App\Facades\RechargeLog;
 use App\Jobs\SendRechargeCallback;
 use App\Lib\GatewayCode;
+use App\Lib\PaymentMap;
 use App\Lib\XDeode;
 use App\Models\PlatUser;
 use App\Models\RechargeGroupPayment;
@@ -23,7 +24,6 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Prettus\Validator\Exceptions\ValidatorException;
 
 class RechargeGatewayController extends Controller
@@ -67,10 +67,22 @@ class RechargeGatewayController extends Controller
             }
             $orderInfo = $this->orderService->storeOrder($request, $platuser, $group_payment, $recharge_if);
             $third_if = $this->rechargeFactory->getInstance($recharge_if);
-//            if ($third_if instanceof QRCapable) {
-//                dd($third_if->pay($orderInfo));
-//            }
-            return redirect($third_if->pay($orderInfo));
+            if (PaymentMap::isBankHref($data['recharge_type'])) {
+                return redirect($third_if->bankHref($orderInfo));
+            }
+            if (PaymentMap::isScanCode($data['recharge_type'])) {
+                if ($third_if instanceof QRCapable) {
+                    return view('gateway.recharge.index', ['qrcode' => $third_if->qrCode($orderInfo)]);
+                } else {
+                    return redirect($third_if->scanCode($orderInfo));
+                }
+            }
+            if (PaymentMap::isWapReq($data['recharge_type'])) {
+                return response($third_if->wapReq($orderInfo));
+            }
+            if (PaymentMap::isSdkReq($data['recharge_type'])) {
+                $third_if->sdkReq($orderInfo);
+            }
         } catch (ValidatorException $exception) {
             return GatewayResponseService::fieldError($exception->getMessageBag()->getMessages());
         } catch (\Exception $exception) {

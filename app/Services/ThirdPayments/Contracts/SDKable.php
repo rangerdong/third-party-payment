@@ -3,7 +3,7 @@ namespace App\Services\ThirdPayments\Contracts;
 
 use App\Models\RechargeOrder;
 
-interface QRCapable
+interface SDKable
 {
-    public function qrCode(RechargeOrder $rechargeOrder);
+    public function sdkReq(RechargeOrder $rechargeOrder);
 }

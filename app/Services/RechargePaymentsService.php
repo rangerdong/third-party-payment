@@ -70,20 +70,22 @@ class RechargePaymentsService
                     }
                 });
             });
-        }
-        $request->validate([
-            'group_pm.*.rate' => ['required', 'numeric', 'regex:/(^([0-9]{1,2}\.)([0-9]{1,3})$)|(^[0-9]{1,2}$)/'],
-            'group_pm.*.mode_id' => ['required']
-        ]);
-        $group_pms = $request->input('group_pm');
-        try {
-            foreach ($group_pms as $k => $group_pm) {
-                RechargeGroupPayment::find($k)->update($group_pm);
+        } else {
+            $request->validate([
+                'group_pm.*.rate' => ['required', 'numeric', 'regex:/(^([0-9]{1,2}\.)([0-9]{1,3})$)|(^[0-9]{1,2}$)/'],
+                'group_pm.*.mode_id' => ['required']
+            ]);
+            $group_pms = $request->input('group_pm');
+            try {
+                foreach ($group_pms as $k => $group_pm) {
+                    RechargeGroupPayment::find($k)->update($group_pm);
+                }
+                return count($group_pms) == 1 ? back() : ApiResponseService::success(Code::SUCCESS);
+            } catch (\Exception $exception) {
+                return ApiResponseService::showError(Code::FATAL_ERROR, $exception);
             }
-            return count($group_pms) == 1 ? back() : ApiResponseService::success(Code::SUCCESS);
-        } catch (\Exception $exception) {
-            return ApiResponseService::showError(Code::FATAL_ERROR, $exception);
         }
+
     }
 
     protected static function groupPayments(Request $request, $id)

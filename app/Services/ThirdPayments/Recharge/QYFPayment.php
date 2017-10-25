@@ -2,11 +2,12 @@
 namespace App\Services\ThirdPayments\Recharge;
 
 
-use App\Models\DictPayment;
+use App\Lib\PaymentMap;
 use App\Models\RechargeOrder;
-use App\Services\ThirdPayments\Contracts\RechargeAbstract;
+use App\Services\ThirdPayments\Contracts\RechargeBase;
+use Monolog\Handler\IFTTTHandler;
 
-class QYFPayment extends RechargeAbstract
+class QYFPayment extends RechargeBase
 {
     public function callback(array $data)
     {
@@ -37,21 +38,6 @@ class QYFPayment extends RechargeAbstract
         }
     }
 
-    public function pay(RechargeOrder $rechargeOrder):string
-    {
-        // TODO: Implement pay() method.
-        $this->setParameter('orderid', $rechargeOrder->plat_no);
-        $this->setParameter('money', $rechargeOrder->order_amt);
-        $this->setParameter('hrefurl', $this->getCallbackUrl());
-        $this->setParameter('url', $this->getReturnUrl());
-        $this->setParameter('bankid', $this->getPaymentMap($rechargeOrder->order_data['recharge_type']));
-        $this->setParameter('ext', $rechargeOrder->order_data['body']);
-
-        $sign = $this->paySign();
-
-        $this->setParameter('sign', $sign);
-        return $this->getPayGateway() .'?'. http_build_query($this->getParameters());
-    }
 
     public function query(RechargeOrder $rechargeOrder)
     {
@@ -77,11 +63,11 @@ class QYFPayment extends RechargeAbstract
     {
         // TODO: Implement initPaymentMap() method.
         $this->payment_map = [
-            'weixin' => 'weixin',
-            'alipay' => 'zhifubao',
-            'weixin_wap' => 'weixin-wap',
-            'alipay_wap' => 'zhifubao-wap',
-            'bank' => 'wangyin'
+            PaymentMap::WX => 'weixin',
+            PaymentMap::ALI => 'zhifubao',
+            PaymentMap::WX_WAP => 'weixin-wap',
+            PaymentMap::ALI_WAP => 'zhifubao-wap',
+            PaymentMap::BANK => 'wangyin'
         ];
     }
 
@@ -89,5 +75,40 @@ class QYFPayment extends RechargeAbstract
     {
         // TODO: Implement showSuccess() method.
         return 'success';
+    }
+
+    public function initParameters(RechargeOrder $rechargeOrder)
+    {
+        $mchData = $rechargeOrder->order_data;
+        $this->setParameter('orderid', $rechargeOrder->plat_no);
+        $this->setParameter('money', $rechargeOrder->order_amt);
+        $this->setParameter('hrefurl', $this->getCallbackUrl());
+        $this->setParameter('url', $this->getReturnUrl());
+        if (PaymentMap::isBankHref($mchData['recharge_type'])) {
+            $bankid = $mchData['bank_code'];
+        } else {
+            $bankid = $mchData['recharge_type'];
+        }
+        $this->setParameter('bankid', $bankid);
+        $this->setParameter('ext', $mchData['body']);
+        $sign = $this->paySign();
+
+        $this->setParameter('sign', $sign);
+    }
+
+    public function bankHref(RechargeOrder $rechargeOrder)
+    {
+        // TODO: Implement bankHref() method.
+        $this->initParameters($rechargeOrder);
+
+        return $this->getPayGateway() . '?' . http_build_query($this->getParameters());
+
+    }
+
+    public function scanCode(RechargeOrder $rechargeOrder)
+    {
+        // TODO: Implement scanCode() method.
+        $this->initParameters($rechargeOrder);
+        return $this->getPayGateway() . '?' . http_build_query($this->getParameters());
     }
 }

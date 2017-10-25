@@ -7,7 +7,7 @@ use App\Lib\XDeode;
 use App\Models\RechargeIf;
 use App\Models\RechargeOrder;
 
-abstract class RechargeAbstract implements AsyncCallback
+abstract class RechargeBase implements AsyncCallback
 {
     protected $gw_pay;
     protected $gw_query;
@@ -83,11 +83,17 @@ abstract class RechargeAbstract implements AsyncCallback
      */
     abstract function initPaymentMap();
 
-    //支付接口
-    abstract public function pay(RechargeOrder $rechargeOrder);
 
     //查询接口
     abstract public function query(RechargeOrder $rechargeOrder);
+
+    abstract public function initParameters(RechargeOrder $rechargeOrder);
+
+    //银行支付
+    abstract public function bankHref(RechargeOrder $rechargeOrder);
+
+    //扫码支付
+    abstract public function scanCode(RechargeOrder $rechargeOrder);
 
     //支付签名
     abstract public function paySign():string;

@@ -3,7 +3,7 @@ namespace App\Services\ThirdPayments\Contracts;
 
 use App\Models\RechargeOrder;
 
-interface QRCapable
+interface WAPable
 {
-    public function qrCode(RechargeOrder $rechargeOrder);
+    public function wapReq(RechargeOrder $rechargeOrder);
 }

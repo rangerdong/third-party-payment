@@ -124,6 +124,9 @@ class RechargeSplitModeController extends Controller
             $form->display('updated_at', 'Updated At');
 
             $form->saving(function (Form $form) {
+                if ($form->sp_if_id == null) {
+                    $form->sp_if_id = 0;
+                }
                 //若是此通道类型的第一条添加，则自动是默认的
                 if (RechargeSplitMode::where('pm_id', $form->pm_id)->where('is_default', 1)->count() == 0) {
                     $form->is_default = 1;

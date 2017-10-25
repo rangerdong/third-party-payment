@@ -73,11 +73,19 @@ class DictPaymentController extends Controller
     {
         return Admin::grid(DictPayment::class, function (Grid $grid) {
 
+            $grid->model()->orderBy('is_bank', 'asc');
             $grid->id('ID')->sortable();
             $grid->name('通道名');
             $grid->identify('通道编码');
-            $grid->column('is_bank', '网银通道')->display(function ($is_bank) {
-                return $is_bank ? '是' : '否';
+            $grid->column('is_bank', '通道类型')->display(function ($is_bank) {
+                switch ($is_bank) {
+                    case 0:
+                        return '在线通道'; break;
+                    case 1:
+                        return '网银通道'; break;
+                    case 2:
+                        return '结算通道'; break;
+                }
             })->sortable();
             $grid->status('通道状态')->display(function ($status) {
                 return $status ? '开启': '关闭';
@@ -102,9 +110,10 @@ class DictPaymentController extends Controller
             $form->display('id', 'ID');
             $form->text('name', '通道名');
             $form->text('identify', '通道编码');
-            $form->radio('is_bank', '银行通道')->options([
-                0 => '否',
-                1 => '是'
+            $form->radio('is_bank', '通道类型')->options([
+                0 => '在线通道',
+                1 => '网银通道',
+                2 => '结算通道'
             ])->default(0);
             $form->radio('status', '是否开启')->options([
                 0 => '关闭',

@@ -17,7 +17,7 @@ class DictPayment extends Model
 
     public function scopeSettle($query)
     {
-        return $query->where('is_bank', 1);
+        return $query->whereIn('is_bank', [1, 2]);
     }
 
 }
