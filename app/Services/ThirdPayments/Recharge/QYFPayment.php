@@ -5,10 +5,12 @@ namespace App\Services\ThirdPayments\Recharge;
 use App\Lib\PaymentMap;
 use App\Models\RechargeOrder;
 use App\Services\ThirdPayments\Contracts\RechargeBase;
-use Monolog\Handler\IFTTTHandler;
+use App\Services\ThirdPayments\Recharge\BankTraits\QYFBankMap;
 
 class QYFPayment extends RechargeBase
 {
+    use QYFBankMap;
+
     public function callback(array $data)
     {
         // TODO: Implement callback() method.
@@ -85,7 +87,7 @@ class QYFPayment extends RechargeBase
         $this->setParameter('hrefurl', $this->getCallbackUrl());
         $this->setParameter('url', $this->getReturnUrl());
         if (PaymentMap::isBankHref($mchData['recharge_type'])) {
-            $bankid = $mchData['bank_code'];
+            $bankid = $this->getBank($mchData['bank_code']);
         } else {
             $bankid = $mchData['recharge_type'];
         }
