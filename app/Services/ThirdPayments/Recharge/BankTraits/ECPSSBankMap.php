@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\ThirdPayments\Recharge\BankTraits;
 
-trait QYFBank
+trait ECPSSBankMap
 {
     public function getBank($bank_code)
     {
