@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Tools\DictPaymentClassify;
 use App\Models\DictPayment;
 
 use Encore\Admin\Form;
@@ -10,6 +11,7 @@ use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use Illuminate\Support\Facades\Request;
 
 class DictPaymentController extends Controller
 {
@@ -73,7 +75,9 @@ class DictPaymentController extends Controller
     {
         return Admin::grid(DictPayment::class, function (Grid $grid) {
 
-            $grid->model()->orderBy('is_bank', 'asc');
+            if (in_array(Request::get('classify', 0), [0, 1, 2])) {
+                $grid->model()->where('is_bank', Request::get('classify', 0));
+            }
             $grid->id('ID')->sortable();
             $grid->name('通道名');
             $grid->identify('通道编码');
@@ -86,7 +90,7 @@ class DictPaymentController extends Controller
                     case 2:
                         return '结算通道'; break;
                 }
-            })->sortable();
+            });
             $grid->status('通道状态')->display(function ($status) {
                 return $status ? '开启': '关闭';
             });
@@ -94,6 +98,9 @@ class DictPaymentController extends Controller
             $grid->disableExport();
             $grid->actions(function ($actions) {
                  $actions->disableDelete();
+            });
+            $grid->tools(function ($tools) {
+                $tools->append(new DictPaymentClassify());
             });
         });
     }
