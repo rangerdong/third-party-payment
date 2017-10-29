@@ -1,7 +1,7 @@
 <?php
 namespace App\Lib;
 
-class BankMap
+class BankMap extends AbstractMap
 {
     const GONGSHANG   =  'icbc';
     const NONGYE      =  'abc';
@@ -28,7 +28,7 @@ class BankMap
     const HANGZHOU    =  'hzb';
     const ZJJIANGCHOU =  'czcb';
 
-    public static function BankDict()
+    public static function getMap()
     {
         return [
             self::GONGSHANG    => '中国工商银行',
