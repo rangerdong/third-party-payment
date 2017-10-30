@@ -25,7 +25,7 @@ class CreatePlatUserBanksTable extends Migration
             $table->string('number')->comment('联行号');
             $table->tinyInteger('is_default')->default(0)->comment('是否默认');
             $table->unique('account');
-            $table->index(['account', 'category']);
+            $table->index(['username', 'account', 'category']);
             $table->timestamps();
         });
     }

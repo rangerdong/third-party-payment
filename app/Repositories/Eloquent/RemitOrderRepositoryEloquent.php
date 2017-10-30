@@ -4,15 +4,14 @@ namespace App\Repositories\Eloquent;
 
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
-use App\Repositories\Contracts\WithdrawOrderRepository;
-use App\Models\WithdrawOrder;
-use App\Validators\WithdrawOrderValidator;
+use App\Repositories\Contracts\RemitOrderRepository;
+use App\Models\RemitOrder;
 
 /**
- * Class WithdrawOrderRepositoryEloquent
+ * Class RemiteOrderRepositoryEloquent
  * @package namespace App\Repositories\Eloquent;
  */
-class WithdrawOrderRepositoryEloquent extends BaseRepository implements WithdrawOrderRepository
+class RemitOrderRepositoryEloquent extends BaseRepository implements RemitOrderRepository
 {
     /**
      * Specify Model class name
@@ -21,7 +20,7 @@ class WithdrawOrderRepositoryEloquent extends BaseRepository implements Withdraw
      */
     public function model()
     {
-        return WithdrawOrder::class;
+        return RemitOrder::class;
     }
 
     

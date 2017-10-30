@@ -60,15 +60,15 @@ $('a.grid-audit').on('click', function () {
                 reason: reason
             },
         success: function (data) {
-        $.pjax . reload('#pjax-container');
+        $.pjax.reload('#pjax-container');
         if (typeof data === 'object') {
-            if (data . code == 0) {
-                swal(data . message, '', 'success');
+            if (data.code == 0) {
+                swal(data.message, '', 'success');
             } else {
-                swal(data . message, '', 'error');
+                swal(data.message, '', 'error');
             }
         }
-            }
+        }
     });
     }
 });

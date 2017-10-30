@@ -44,6 +44,8 @@ Route::group([
 
     //订单管理
     $router->resource('/orders/recharge', 'RechargeOrderController');
+    $router->resource('/orders/remit/audit', 'RemitOrderAuditController');
+    $router->resource('/orders/remit', 'RemitOrderController');
 
 
     //系统配置
@@ -64,6 +66,8 @@ Route::group([
         $r->post('platuser/app/audit', 'ApiController@auditApp')->name('api.platuser.app.audit');
 
         $r->post('order/recharge/callback', 'ApiController@rechargeCallback')->name('api.order.recharge.callback');
+
+        $r->post('order/remit/operate', 'RemitOrderController@operate')->name('api.order.remit.operate');
     });
 
 

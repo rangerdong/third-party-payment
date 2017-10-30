@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
-class WithdrawOrder extends Model implements Transformable
+class PlatUserBank extends Model implements Transformable
 {
     use TransformableTrait;
 
-    protected $fillable = [];
+    protected $guarded = ['id'];
 
 }

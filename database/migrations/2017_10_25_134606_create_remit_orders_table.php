@@ -22,7 +22,7 @@ class CreateRemitOrdersTable extends Migration
             $table->decimal('fee', 8, 2)->comment('手续费');
             $table->decimal('ac_money', 12, 2)->comment('实际金额');
             $table->tinyInteger('classify')->default(0)->comment('结算类别 0提现 1代付');
-            $table->tinyInteger('status')->default(0)->comment('单据状态 0待打款/审核 1打款中 2打款成功 3已撤销 4已退回');
+            $table->tinyInteger('status')->default(0)->comment('单据状态 0待审核 1待打款 2打款中 3打款成功 4已撤销 5已退回 6审核未通过');
             $table->tinyInteger('disposal')->default(0)->comment('处理方式 0人工处理 1api处理');
             $table->string('bk_username', 150)->comment('开户人名称');
             $table->string('bk_category', 15)->comment('银行卡类别');
@@ -32,10 +32,16 @@ class CreateRemitOrdersTable extends Migration
             $table->string('bk_branch', 255)->comment('银行开户分行');
             $table->string('bk_number', 50)->nullable()->comment('联行号');
 
+            $table->string('remark', 500)->nullable()->comment('备注信息');
+            $table->string('ad_remark', 500)->nullable()->comment('管理人员备注信息');
             $table->integer('adminid')->nullable()->comment('操作人员id');
             $table->timestamp('operated_at')->nullable()->comment('操作时间');
             $table->softDeletes();
             $table->timestamps();
+            $table->unique('plat_no');
+            $table->index('uid');
+            $table->index('status');
+            $table->index(['bk_category', 'bk_account']);
 		});
 	}
 

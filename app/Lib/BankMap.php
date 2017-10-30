@@ -28,9 +28,9 @@ class BankMap extends AbstractMap
     const HANGZHOU    =  'hzb';
     const ZJJIANGCHOU =  'czcb';
 
-    public static function getMap()
+    public static function getMap($bank_code = null)
     {
-        return [
+        $map = [
             self::GONGSHANG    => '中国工商银行',
             self::NONGYE       => '中国农业银行',
             self::ZHAOSHANG    => '中国招商银行',
@@ -56,5 +56,13 @@ class BankMap extends AbstractMap
             self::HANGZHOU     => '杭州银行',
             self::ZJJIANGCHOU  => '浙江江稠州商业银行'
         ];
+        if ($bank_code !== null) {
+            if (array_key_exists($bank_code, $map)) {
+                return $map[$bank_code];
+            } else {
+                return null;
+            }
+        }
+        return $map;
     }
 }
