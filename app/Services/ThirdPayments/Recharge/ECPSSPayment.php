@@ -8,9 +8,12 @@ use App\Models\RechargeOrder;
 use App\Services\ThirdPayments\Contracts\QRCapable;
 use App\Services\ThirdPayments\Contracts\RechargeBase;
 use App\Services\ThirdPayments\Contracts\WAPable;
+use App\Services\ThirdPayments\Recharge\BankTraits\ECPSSBankMap;
 
 class ECPSSPayment extends RechargeBase implements QRCapable, WAPable
 {
+    use ECPSSBankMap;
+
     protected $bankGateway = 'https://gwapi.yemadai.com/pay/sslpayment';
     protected $qrCodeGateway = "https://gwapi.yemadai.com/pay/scanpay";
     protected $appGateway = 'https://gwapi.yemadai.com/pay/apppay';
@@ -139,7 +142,7 @@ xml;
         $this->setParameter('payType', $this->getPaymentMap($mchData['recharge_type']));
         $this->setParameter('Remark', $mchData['body']);
         if (PaymentMap::isBankHref($mchData['recharge_type']) && array_key_exists('bank_code', $mchData)) {
-            $this->setParameter('defaultBankNumber', $mchData['bank_code']);
+            $this->setParameter('defaultBankNumber', $this->getBank($mchData['bank_code']));
         }
         $this->setParameter('SignInfo', $this->paySign());
         $this->setPayGateway($this->bankGateway);
@@ -177,8 +180,5 @@ xml;
 </form><script>window.onload = function(){document.forms['ecpss-from'].submit()}</script>
 form;
         return $reqForm;
-
-
-
     }
 }

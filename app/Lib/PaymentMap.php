@@ -1,7 +1,7 @@
 <?php
 namespace App\Lib;
 
-class PaymentMap
+class PaymentMap extends AbstractMap
 {
     const WX = 'weixin';
     const ALI = 'alipay';
@@ -44,4 +44,18 @@ class PaymentMap
         return false;
     }
 
+    static function getMap()
+    {
+        // TODO: Implement getMap() method.
+        return [
+            self::WX            => '微信扫码',
+            self::ALI           => '支付宝扫码',
+            self::BANK          => '在线银行',
+            self::WX_WAP        => '微信WAP',
+            self::ALI_WAP       => '支付宝WAP',
+            self::BANK_WAP      => '银联在线',
+            self::WX_SDK        => '微信SDK',
+            self::ALI_SDK       => '支付宝SDK'
+        ];
+    }
 }
