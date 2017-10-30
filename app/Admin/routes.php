@@ -44,8 +44,9 @@ Route::group([
 
     //订单管理
     $router->resource('/orders/recharge', 'RechargeOrderController');
-    $router->resource('/orders/remit/audit', 'RemitOrderAuditController');
-    $router->resource('/orders/remit', 'RemitOrderController');
+    $router->resource('/orders/topay/audit', 'ToPayOrderAuditController');
+    $router->resource('/orders/topay', 'ToPayOrderController');
+    $router->resource('/orders/withdraw', 'WithdrawOrderController');
 
 
     //系统配置

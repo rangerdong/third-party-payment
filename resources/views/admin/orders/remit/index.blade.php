@@ -1,4 +1,4 @@
-<div class="box">
+<table class="box">
     <div class="box-header">
 
         <h3 class="box-title"></h3>
@@ -11,25 +11,75 @@
 
     </div>
     <!-- /.box-header -->
-    <div class="box-body table-responsive no-padding">
+    <table class="box-body table-responsive no-padding">
         <table class="table table-hover">
             <tr>
                 <th> </th>
-                <th>ID<a class="fa fa-fw fa-sort" href="http://www.payment.com/admin/orders/remit/audit?_sort%5Bcolumn%5D=id&amp;_sort%5Btype%5D=desc"></a></th>
+                <th>ID</th>
                 <th>批次号</th>
                 <th>商户账户</th>
                 <th>出款金额</th>
                 <th>单据状态</th>
+                <th>提交时间</th>
                 <th>操作</th>
             </tr>
             @foreach($items as $item)
                 <tr>
+                    <td>
+                            <button type="button" data-id="{{$item->id}}" class="expand"><i class="fa fa-minus"></i></button>
+                            <button type="button" data-id="{{$item->id}}" class="collapse"><i class="fa fa-plus"></i></button>
+                    </td>
                     <td>{{$item->id}}</td>
-                    <td>{{$item->branch_no}}</td>
+                    <td>{{$item->batch_no}}</td>
                     <td>{{$item->platuser->username}}</td>
                     <td>{{$item->total_money}}</td>
                     <td>{{$item->status}}</td>
-                    <td>1231</td>
+                    <td>{{$item->created_at}}</td>
+                    <td></td>
+                </tr>
+                    {{--<div  class="box-body table-responsive no-padding">--}}
+                    <tr>
+                        <td colspan="7">
+                        <table class="table table-hover item-table" data-id="{{$item->id}}" style="display: block;padding-left: 20px">
+                            <tr>
+                                <th><i class="fa fa-angle-down"></i></th>
+                                <th>ID</th>
+                                <th>系统流水号</th>
+                                <th>姓名</th>
+                                <th>账号</th>
+                                <th>银行</th>
+                                <th>省份</th>
+                                <th>城市</th>
+                                <th>分行</th>
+                                <th>出款金额</th>
+                                <th>收取手续费</th>
+                                <th>实际扣款</th>
+                                <th>单据状态</th>
+                                <th>更新时间</th>
+                                <th>操作</th>
+                            </tr>
+                            @foreach($item->manyChild as $child)
+                                <tr>
+                                    <td><i class="fa fa-angle-down"></i></td>
+                                    <td>{{$child->id}}</td>
+                                    <td>{{$child->plat_no}}</td>
+                                    <td>{{$child->bk_username}}</td>
+                                    <td>{{$child->bk_account}}</td>
+                                    <td>{{\App\Lib\BankMap::getMap($child->bk_category)}}</td>
+                                    <td>{{$child->bk_prov}}</td>
+                                    <td>{{$child->bk_city}}</td>
+                                    <td>{{$child->bk_branch}}</td>
+                                    <td>{{$child->money}}</td>
+                                    <td>{{$child->fee}}</td>
+                                    <td>{{$child->ac_money}}</td>
+                                    <td>{{$child->status}}</td>
+                                    <td>{{$child->updated_at}}</td>
+                                    <td>--</td>
+                                </tr>
+                            @endforeach
+                        </table>
+                    </td>
+                    {{--</div>--}}
                 </tr>
             @endforeach
         </table>

@@ -14,7 +14,7 @@ class RemitOrderAction
         $this->status = $status;
     }
 
-    protected function script()
+    public function script()
     {
         $url = route('api.order.remit.operate');
         $token = csrf_token();
@@ -73,7 +73,7 @@ $('.grid-remit-operate').on('click', function() {
 script;
     }
 
-    protected function render()
+    public function render()
     {
         Admin::script($this->script());
         $pass = "<a class='label btn-sm btn-success grid-remit-operate' data-type='pass' data-id='{$this->id}'>通过</a>";

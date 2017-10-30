@@ -16,7 +16,7 @@ use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use Illuminate\Support\Facades\Request;
 
-class RemitOrderController extends Controller
+class WithdrawOrderController extends Controller
 {
     use ModelForm;
 
@@ -29,7 +29,7 @@ class RemitOrderController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('出款订单管理');
+            $content->header('提现订单管理');
             $content->description('列表');
 
             $content->body($this->grid());
@@ -46,7 +46,7 @@ class RemitOrderController extends Controller
     {
         return Admin::content(function (Content $content) use ($id) {
 
-            $content->header('出款单据详情');
+            $content->header('提现单据详情');
             $content->description(RemitOrder::find($id)->plat_no);
 
             $content->body($this->form()->edit($id));
@@ -81,15 +81,7 @@ class RemitOrderController extends Controller
 //            dd(SystemNumber::getBatchNoNumber(), SystemNumber::getToPayOrderNumber(SystemNumber::getToPayPrefixNumber(), 1));
             $grid->id('ID')->sortable();
 
-            $grid->model()->notAudit();
-            if (in_array(Request::get('classify', 0), [0, 1, 2])) {
-                $classify = Request::get('classify', 0);
-                if ($classify == 1) {
-                    $grid->model()->withdraw();
-                } elseif ($classify == 2) {
-                    $grid->model()->topay();
-                }
-            }
+            $grid->model()->withdraw();
             $grid->column('plat_no', '系统流水号');
             $grid->column('batch_no', '批次号')->sortable();
             $grid->column('platuser.username', '商户账户');
@@ -112,9 +104,9 @@ class RemitOrderController extends Controller
             });
 
             $grid->disableCreation();
-            $grid->tools(function ($tools) {
-                $tools->append(new RemitOrderClassify());
-            });
+//            $grid->tools(function ($tools) {
+//                $tools->append(new RemitOrderClassify());
+//            });
             $grid->actions(function ($actions) {
                 $row = $actions->row;
                 $actions->append(new RemitOrderAction($this->getKey(), $row['status']));
