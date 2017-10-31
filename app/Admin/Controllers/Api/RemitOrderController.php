@@ -24,6 +24,7 @@ class RemitOrderController extends Controller
         $type = $request->input('audit');
         $id = $request->input('id');
         $reason = $request->input('reason');
+        $settle = $request->input('settle');
         try {
             switch ($type) {
                 case 'pass':
@@ -31,10 +32,11 @@ class RemitOrderController extends Controller
                 case 'refuse':
                     $this->remitRepository->auditRefuse($id, $reason); break;
                 case 'remitted':
-                    $this->remitRepository->remitted($id); break;
+                    $this->remitRepository->remitted($id, true);break;
                 case 'remit':
-                    $this->remitRepository->remit($id); break;
+                    $this->remitRepository->remit($id);
 
+                    break;
             }
             return ApiResponseService::success(Code::SUCCESS);
         } catch (\Exception $exception) {

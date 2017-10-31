@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\Actions\RemitOrderAction;
+use App\Admin\Extensions\Tools\RemitIfsSelect;
 use App\Admin\Extensions\Tools\RemitOrderClassify;
 use App\Lib\BankMap;
 use App\Lib\SystemNumber;
@@ -104,9 +105,9 @@ class WithdrawOrderController extends Controller
             });
 
             $grid->disableCreation();
-//            $grid->tools(function ($tools) {
-//                $tools->append(new RemitOrderClassify());
-//            });
+            $grid->tools(function ($tools) {
+                $tools->append(new RemitIfsSelect());
+            });
             $grid->actions(function ($actions) {
                 $row = $actions->row;
                 $actions->append((new RemitOrderAction())->render($this->getKey(), $row['status']));

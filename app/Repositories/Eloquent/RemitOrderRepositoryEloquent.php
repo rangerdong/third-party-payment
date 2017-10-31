@@ -63,11 +63,20 @@ class RemitOrderRepositoryEloquent extends BaseRepository implements RemitOrderR
     }
 
     //已打款
-    public function remitted($id)
+    public function remitted($id, $is_handle=false)
     {
         $order = $this->model->find($id);
         $order->status = RemitStatus::REMIT_SUCCESS;
+        if ($is_handle) $order->disposal = 1;
         $this->assetAccount->operateAsset($order->uid, 'withdraw', $order->ac_money);
+        $order->save();
+        return true;
+    }
+
+    public function remit($id)
+    {
+        $order = $this->model->find($id);
+        $order->status = RemitStatus::REMITTING;
         $order->save();
         return true;
     }

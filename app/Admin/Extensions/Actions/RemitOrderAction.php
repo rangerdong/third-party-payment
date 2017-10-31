@@ -23,8 +23,8 @@ class RemitOrderAction
 $('.grid-remit-operate').on('click', function() {
     var type = $(this).data('type')
     var id = $(this).data('id')
-    console.log(id)
     var reason = '账户信息不正确'
+    var settleif = $('#settle_if').val()
     if(type == 'refuse') {
         swal({ 
           title: "输入拒绝理由！", 
@@ -45,6 +45,12 @@ $('.grid-remit-operate').on('click', function() {
           reason = inputValue;
           postAudit();
         });
+    } else if (type == 'remit') {
+        if (settleif == 0) {
+            swal('请选择接口厂商', '', 'error');
+        } else {
+            postAudit();
+        }
     } else {
         postAudit();
     }
@@ -57,7 +63,8 @@ $('.grid-remit-operate').on('click', function() {
                 _token:'{$token}',
                 audit: type,
                 id: id,
-                reason: reason
+                reason: reason,
+                settle: settleif
             },
         success: function (data) {
         $.pjax.reload('#pjax-container');

@@ -12,4 +12,9 @@ class RemitOrderDetail extends Model implements Transformable
 
     protected $guarded = ['id'];
 
+    public function settleIf()
+    {
+        return $this->belongsTo(SettlementIf::class, 'if_id');
+    }
+
 }

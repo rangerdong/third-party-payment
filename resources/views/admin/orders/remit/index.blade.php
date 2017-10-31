@@ -60,6 +60,8 @@
                                 <th>收取手续费</th>
                                 <th>实际扣款</th>
                                 <th>单据状态</th>
+                                <th>结算接口</th>
+                                <th>结算状态</th>
                                 <th>更新时间</th>
                                 <th>操作</th>
                             </tr>
@@ -78,6 +80,8 @@
                                     <td>{{$child->fee}}</td>
                                     <td>{{$child->ac_money}}</td>
                                     <td>{!! $toPayPresenter->batchStatus($child) !!}</td>
+                                    <td>{{$child->hasDetail ? $child->hasDetail->settleIf->name :'-'}}</td>
+                                    <td>{{$child->hasDetail ? $child->hasDetail->status : '-'}}</td>
                                     <td>{{$child->updated_at}}</td>
                                     <td>{!! (new \App\Admin\Extensions\Actions\RemitOrderAction())->getItemActions($child->id, $child->status)!!}</td>
                                 </tr>

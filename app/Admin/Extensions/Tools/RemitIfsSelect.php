@@ -16,4 +16,9 @@ class RemitIfsSelect extends AbstractTool
         $ifs = SettlementIf::where('status', 1)->get();
         return view('admin.tools.settleif', compact('ifs'));
     }
+
+    public function __toString()
+    {
+        return $this->render();
+    }
 }
