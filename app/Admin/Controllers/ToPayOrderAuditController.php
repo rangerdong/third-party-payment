@@ -77,6 +77,7 @@ class ToPayOrderAuditController extends Controller
     protected function grid()
     {
         Admin::script((new ToPayOrderPresenter())->itemScript());
+        Admin::script((new RemitOrderAction())->script());
         $items = RemitOrder::topay()
             ->audit()
             ->select('id', 'plat_no', 'batch_no', 'uid', 'money',DB::raw('sum(`money`) as total_money'),

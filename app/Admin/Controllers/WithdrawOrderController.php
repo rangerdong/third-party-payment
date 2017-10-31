@@ -109,7 +109,7 @@ class WithdrawOrderController extends Controller
 //            });
             $grid->actions(function ($actions) {
                 $row = $actions->row;
-                $actions->append(new RemitOrderAction($this->getKey(), $row['status']));
+                $actions->append((new RemitOrderAction())->render($this->getKey(), $row['status']));
             });
             $grid->created_at('提现时间');
             $grid->updated_at('更新时间');

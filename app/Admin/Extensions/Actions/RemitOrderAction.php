@@ -1,17 +1,18 @@
 <?php
 namespace App\Admin\Extensions\Actions;
 
+use App\Lib\Status\RemitStatus;
 use Encore\Admin\Admin;
 
 class RemitOrderAction
 {
-    protected $id;
-    protected $status;
+//    protected $id;
+//    protected $status;
 
-    public function __construct($id, $status)
+    public function __construct()
     {
-        $this->id = $id;
-        $this->status = $status;
+//        $this->id = $id;
+//        $this->status = $status;
     }
 
     public function script()
@@ -22,11 +23,12 @@ class RemitOrderAction
 $('.grid-remit-operate').on('click', function() {
     var type = $(this).data('type')
     var id = $(this).data('id')
+    console.log(id)
     var reason = '账户信息不正确'
     if(type == 'refuse') {
         swal({ 
           title: "输入拒绝理由！", 
-          text: reason,
+          text: '',
           type: "input", 
           showCancelButton: true, 
           closeOnConfirm: false, 
@@ -73,32 +75,21 @@ $('.grid-remit-operate').on('click', function() {
 script;
     }
 
-    public function render()
+    public function render($id, $status)
     {
         Admin::script($this->script());
-        $pass = "<a class='label btn-sm btn-success grid-remit-operate' data-type='pass' data-id='{$this->id}'>通过</a>";
-        $refuse = "<a class='label btn-sm btn-danger grid-remit-operate' data-type='refuse' data-id='{$this->id}'>拒绝</a>";
-        $remit = "<a class='label btn-sm btn-success grid-remit-operate' data-type='remit' data-id='{$this->id}'>已打款</a>";
-        $revoke = "<a class='label btn-sm btn-warning grid-remit-operate' data-type='revoke' data-id='{$this->id}'>撤销</a>";
-        $return = "<a class='label btn-sm btn-danger grid-remit-operate' data-type='revoke' data-id='{$this->id}'>退回</a>";
-        $fail = "<a class='label btn-sm btn-danger grid-remit-operate' data-type='revoke' data-id='{$this->id}'>打款失败</a>";
+        return $this->getItemActions($id, $status);
+    }
+
+    public function getBatchActions($id, $status)
+    {
+        $pass = "<a class='label btn-sm btn-success grid-remit-operate' data-type='pass' data-id='{$id}'>通过</a>";
+        $refuse = "<a class='label btn-sm btn-danger grid-remit-operate' data-type='refuse' data-id='{$id}'>拒绝</a>";
         $html = '';
-        switch ($this->status) {
-            case 0:
+        switch ($status) {
+            case RemitStatus::PENDING_REVIEW:
                 $html .= $pass . $refuse; break;
-            case 1:
-                $html .= $remit . $revoke . $return;break;
-            case 2:
-                $html .= $remit . $fail; break;
-            case 3:
-                $html .= ''; break;
-            case 4:
-                $html .= $remit; break;
-            case 5:
-                break;
-            case 6:
-                break;
-            case 7:
+            case RemitStatus::REFUSE_REVIEW:
                 $html .= $pass; break;
             default:
                 break;
@@ -106,10 +97,38 @@ script;
         return $html;
     }
 
-    public function __toString()
+    public function getItemActions($id, $status)
     {
-        // TODO: Implement __toString() method.
-        return $this->render();
+//        $pass = "<a class='label btn-sm btn-success grid-remit-operate' data-type='pass' data-id='{$this->id}'>通过</a>";
+        $remit = "<a class='label btn-sm btn-info grid-remit-operate' data-type='remit' data-id='{$id}'>打款</a>";
+        $remitted = "<a class='label btn-sm btn-success grid-remit-operate' data-type='remitted' data-id='{$id}'>已打款</a>";
+        $revoke = "<a class='label btn-sm btn-warning grid-remit-operate' data-type='revoke' data-id='{$id}'>撤销</a>";
+        $return = "<a class='label btn-sm btn-danger grid-remit-operate' data-type='return' data-id='{$id}'>退回</a>";
+//        $fail = "<a class='label btn-sm btn-danger grid-remit-operate' data-type='fail' data-id='{$id}'>打款失败</a>";
+        $html = '';
+        switch ($status) {
+//            case RemitStatus::PENDING_REVIEW:
+//                $html .= $pass . $refuse; break;
+            case RemitStatus::PENDING_REMIT:
+                $html .= $remit . $remitted . $revoke . $return;break;
+            case RemitStatus::REMITTING:
+                $html .= $remitted; break;
+            case RemitStatus::REMIT_SUCCESS:
+                $html .= ''; break;
+            case RemitStatus::REMIT_FAILED:
+                $html .= $remitted; break;
+//            case RemitStatus::REVIEW_FAILED:
+//                $html .= $pass; break;
+            default:
+                break;
+        }
+        return $html;
     }
+
+//    public function __toString()
+//    {
+//        // TODO: Implement __toString() method.
+//        return $this->render();
+//    }
 
 }

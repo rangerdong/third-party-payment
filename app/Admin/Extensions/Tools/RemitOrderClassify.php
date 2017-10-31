@@ -5,7 +5,7 @@ use Encore\Admin\Admin;
 use Encore\Admin\Grid\Tools\AbstractTool;
 use Illuminate\Support\Facades\Request;
 
-class RemitOrderClassify extends  AbstractTool
+class RemitOrderClassify extends AbstractTool
 {
 
     public function script()

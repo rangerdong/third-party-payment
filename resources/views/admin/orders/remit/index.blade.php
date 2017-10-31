@@ -1,9 +1,12 @@
-<table class="box">
+<div class="box">
     <div class="box-header">
 
-        <h3 class="box-title"></h3>
+        <h3 class="box-title">
+            {!! (new \App\Admin\Extensions\Tools\RemitIfsSelect())->render() !!}
+        </h3>
 
         <div class="pull-right">
+
         </div>
 
         <span>
@@ -11,7 +14,7 @@
 
     </div>
     <!-- /.box-header -->
-    <table class="box-body table-responsive no-padding">
+    <div class="box-body table-responsive no-padding">
         <table class="table table-hover">
             <tr>
                 <th> </th>
@@ -19,27 +22,29 @@
                 <th>批次号</th>
                 <th>商户账户</th>
                 <th>出款金额</th>
+                <th>单据数量</th>
                 <th>单据状态</th>
                 <th>提交时间</th>
                 <th>操作</th>
             </tr>
+            @inject('toPayPresenter','App\Presenters\Admin\ToPayOrderPresenter')
             @foreach($items as $item)
                 <tr>
                     <td>
-                            <button type="button" data-id="{{$item->id}}" class="expand"><i class="fa fa-minus"></i></button>
-                            <button type="button" data-id="{{$item->id}}" class="collapse"><i class="fa fa-plus"></i></button>
+                        <button type="button" data-id="{{$item->id}}" class="expand"><i class="fa fa-minus"></i></button>
+                        <button type="button" data-id="{{$item->id}}" class="collapse"><i class="fa fa-plus"></i></button>
                     </td>
                     <td>{{$item->id}}</td>
                     <td>{{$item->batch_no}}</td>
                     <td>{{$item->platuser->username}}</td>
                     <td>{{$item->total_money}}</td>
-                    <td>{{$item->status}}</td>
+                    <td>{{$item->num}}</td>
+                    <td>{!! $toPayPresenter->batchStatus($item) !!}</td>
                     <td>{{$item->created_at}}</td>
-                    <td></td>
+                    <td>{!! (new \App\Admin\Extensions\Actions\RemitOrderAction())->getBatchActions($item->id, $item->status)!!}</td>
                 </tr>
-                    {{--<div  class="box-body table-responsive no-padding">--}}
-                    <tr>
-                        <td colspan="7">
+                <tr>
+                    <td colspan="7">
                         <table class="table table-hover item-table" data-id="{{$item->id}}" style="display: block;padding-left: 20px">
                             <tr>
                                 <th><i class="fa fa-angle-down"></i></th>
@@ -72,14 +77,13 @@
                                     <td>{{$child->money}}</td>
                                     <td>{{$child->fee}}</td>
                                     <td>{{$child->ac_money}}</td>
-                                    <td>{{$child->status}}</td>
+                                    <td>{!! $toPayPresenter->batchStatus($child) !!}</td>
                                     <td>{{$child->updated_at}}</td>
-                                    <td>--</td>
+                                    <td>{!! (new \App\Admin\Extensions\Actions\RemitOrderAction())->getItemActions($child->id, $child->status)!!}</td>
                                 </tr>
                             @endforeach
                         </table>
                     </td>
-                    {{--</div>--}}
                 </tr>
             @endforeach
         </table>
@@ -89,4 +93,3 @@
     </div>
     <!-- /.box-body -->
 </div>
-
