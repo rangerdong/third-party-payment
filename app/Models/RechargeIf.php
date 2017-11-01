@@ -11,13 +11,12 @@ class RechargeIf extends Model
     use SoftDeletes;
 
     protected $table = 'recharge_ifs';
-    protected $appends = ['identify'];
     protected $dates = ['deleted_at'];
 
-    public function ifdict()
-    {
-        return $this->belongsTo(DictInterface::class, 'if_id');
-    }
+//    public function ifdict()
+//    {
+//        return $this->belongsTo(DictInterface::class, 'if_id');
+//    }
 
     public function payments()
     {
@@ -30,8 +29,8 @@ class RechargeIf extends Model
         return $query->where('status', 1);
     }
 
-    public function getIdentifyAttribute()
+    public function __toString()
     {
-        return $this->ifdict->identify;
+        return $this->identify;
     }
 }

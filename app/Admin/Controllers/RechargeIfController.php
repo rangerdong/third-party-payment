@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Lib\ThirdPartyMap;
 use App\Lib\XDeode;
 use App\Models\DictInterface;
 use App\Models\DictPayment;
@@ -83,12 +84,14 @@ class RechargeIfController extends Controller
 
             $grid->id('ID')->sortable();
             $grid->name('接口名称');
-            $grid->column('ifdict.name', '接口商');
+            $grid->column('identify', '接口商')->display(function ($identify) {
+                return ThirdPartyMap::getNameFromMap($identify);
+            });
             $grid->status('接口状态')->display(function ($status) {
                 return $status ? '开启' : '关闭';
             });
             $grid->column('callback_url', '异步通知地址')->display(function () {
-                return  route('gateway.recharge.callback', (new XDeode())->encode($this->getKey()));
+                return  route('gateway.recharge.callback', $this->identify);
             });
 
             $grid->created_at();
@@ -109,7 +112,7 @@ class RechargeIfController extends Controller
         return Admin::form(RechargeIf::class, function (Form $form) {
 
             $form->display('id', 'ID');
-            $form->select('if_id', '接口商')->options(DictInterface::all()->pluck('name', 'id'));
+            $form->select('identify', '接口商')->options(ThirdPartyMap::getMap());
             $form->multipleSelect('payments', '支持通道')
                 ->options(DictPayment::where('is_bank', 0)
                         ->get()
@@ -121,10 +124,10 @@ class RechargeIfController extends Controller
             ])->default(1);
             $form->text('mc_id', '商户id')->rules('required|max:255');
             $form->text('mc_key', '商户密钥')->rules('required|max:255');
-            $form->text('gw_pay', '支付网关')->rules('required|url');
-            $form->text('gw_query', '查询网关')->rules('required|url');
-            $form->text('gw_refund', '退款网关')->rules('nullable|url');
-            $form->text('gw_refund_query', '退款查询网关')->rules('nullable|url');
+//            $form->text('gw_pay', '支付网关')->rules('required|url');
+//            $form->text('gw_query', '查询网关')->rules('required|url');
+//            $form->text('gw_refund', '退款网关')->rules('nullable|url');
+//            $form->text('gw_refund_query', '退款查询网关')->rules('nullable|url');
             $form->textarea('ext', '额外字段(json存储)')->rows(10)->rules('nullable|json');
             $form->display('created_at', 'Created At');
             $form->display('updated_at', 'Updated At');

@@ -44,10 +44,10 @@ class PaymentMap extends AbstractMap
         return false;
     }
 
-    static function getMap()
+    public static function getMap():array
     {
         // TODO: Implement getMap() method.
-        return [
+        $map = [
             self::WX            => '微信扫码',
             self::ALI           => '支付宝扫码',
             self::BANK          => '在线银行',
@@ -57,5 +57,6 @@ class PaymentMap extends AbstractMap
             self::WX_SDK        => '微信SDK',
             self::ALI_SDK       => '支付宝SDK'
         ];
+        return $map;
     }
 }

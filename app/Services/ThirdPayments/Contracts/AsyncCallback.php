@@ -9,4 +9,6 @@ interface AsyncCallback
 
     //验证异步回调签名
     public function veryCallbackSign(array $data);
+
+    public function getOrderNoFromCallback(array $data);
 }

@@ -39,7 +39,7 @@
                     <td>{{$item->platuser->username}}</td>
                     <td>{{$item->total_money}}</td>
                     <td>{{$item->num}}</td>
-                    <td>{!! $toPayPresenter->batchStatus($item) !!}</td>
+                    <td>{!! $toPayPresenter->batchStatus($item->status) !!}</td>
                     <td>{{$item->created_at}}</td>
                     <td>{!! (new \App\Admin\Extensions\Actions\RemitOrderAction())->getBatchActions($item->id, $item->status)!!}</td>
                 </tr>
@@ -72,14 +72,14 @@
                                     <td>{{$child->plat_no}}</td>
                                     <td>{{$child->bk_username}}</td>
                                     <td>{{$child->bk_account}}</td>
-                                    <td>{{\App\Lib\BankMap::getMap($child->bk_category)}}</td>
+                                    <td>{{\App\Lib\BankMap::getNameFromMap($child->bk_category)}}</td>
                                     <td>{{$child->bk_prov}}</td>
                                     <td>{{$child->bk_city}}</td>
                                     <td>{{$child->bk_branch}}</td>
                                     <td>{{$child->money}}</td>
                                     <td>{{$child->fee}}</td>
                                     <td>{{$child->ac_money}}</td>
-                                    <td>{!! $toPayPresenter->batchStatus($child) !!}</td>
+                                    <td>{!! $toPayPresenter->batchStatus($child->status) !!}</td>
                                     <td>{{$child->hasDetail ? $child->hasDetail->settleIf->name :'-'}}</td>
                                     <td>{{$child->hasDetail ? $child->hasDetail->status : '-'}}</td>
                                     <td>{{$child->updated_at}}</td>

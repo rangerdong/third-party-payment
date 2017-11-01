@@ -1,5 +1,5 @@
 <?php
-namespace App\Services\ThirdPayments\Recharge\BankTraits;
+namespace App\Services\ThirdPayments\BankTraits;
 
 use App\Lib\BankMap;
 

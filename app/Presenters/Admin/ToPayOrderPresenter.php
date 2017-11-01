@@ -26,9 +26,9 @@ script;
         return $script;
     }
 
-    public function batchStatus($item)
+    public function batchStatus($status)
     {
-        switch ($item->status) {
+        switch ($status) {
             case RemitStatus::PENDING_REVIEW:
                 return "<span class='label label-warning'>未审核</span>"; break;
             case RemitStatus::REFUSE_REVIEW:

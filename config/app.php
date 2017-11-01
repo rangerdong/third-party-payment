@@ -110,6 +110,7 @@ return [
 
     'website' => [
         'GATEWAY_DOMAIN' => env('GATEWAY_DOMAIN'),
+        'GATEWAY_SANDBOX' => env('GATEWAY_SANDBOX', false)
     ],
 
     /*

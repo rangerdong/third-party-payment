@@ -98,29 +98,39 @@ class RechargeGatewayController extends Controller
     {
         try{
             DB::beginTransaction();
-            $obj = new XDeode();
-            $id = $obj->decode($identify);
-            $third_if = $this->rechargeFactory->getInstance(RechargeIf::findOrFail($id));
+            $third_if = $this->rechargeFactory->getInstance($identify);
             echo $third_if->showSuccess();
             $notify_data = $request->all();
-//            $notify_info = $third_if->callback($notify_data);
-            $notify_info = ['plat_no' => $notify_data['orderid']];
-            if (is_array($notify_info)) {
-                $order = RechargeOrder::where('plat_no', $notify_info['plat_no'])->where('order_status', 0)->first();
+            $orderNo = $third_if->getOrderNoFromCallback($notify_data);
+            if ($orderNo) {
+                $order = RechargeOrder::where('plat_no', $orderNo)->where('order_status', 0)->first();
                 if ($order) {
-                    $order = $this->orderService->updateOrder($order, $notify_data, $notify_info);
-                    $this->orderService->settleOrder($order);
-                    $notify = $rechargeOrderNotifyService->createNewNotify($order);
-                    SendRechargeCallback::dispatch($notify)->onQueue('recharge.callback');
-                    DB::commit();
-                    exit();
+                    $third_if->initMchProfile($order->upperIf);
+//                    $notify_info = $third_if->callback($order);
+                    $notify_info = ['plat_no' => $notify_data['orderid']];
+                    if ($notify_info !== false) {
+                        $order = $this->orderService->updateOrder($order, $notify_data, $notify_data);
+                        $this->orderService->settleOrder($order);
+                        $notify = $rechargeOrderNotifyService->createNewNotify($order);
+                        SendRechargeCallback::dispatch($notify)->onQueue('recharge.callback');
+                        DB::commit();
+                        exit();
+                    } else {
+                        echo 'sign failed';
+                    }
                 }
             } else {
-                echo 'sign failed';
+                echo 'notify data has no order field';
             }
         } catch (\Exception $exception) {
             DB::rollback();
             echo $exception->getMessage();
         }
+    }
+
+
+    public function returnHref(Request $request, $identify)
+    {
+
     }
 }

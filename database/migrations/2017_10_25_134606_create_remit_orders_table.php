@@ -34,7 +34,7 @@ class CreateRemitOrdersTable extends Migration
 
             $table->string('remark', 500)->nullable()->comment('备注信息');
             $table->string('ad_remark', 500)->nullable()->comment('管理人员备注信息');
-            $table->integer('adminid')->nullable()->comment('操作人员id');
+            $table->integer('admin_id')->nullable()->comment('操作人员id');
             $table->timestamp('operated_at')->nullable()->comment('操作时间');
             $table->softDeletes();
             $table->timestamps();

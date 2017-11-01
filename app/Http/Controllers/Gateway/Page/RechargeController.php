@@ -27,7 +27,8 @@ class RechargeController extends Controller
 
     public function callback(Request $request)
     {
-        return json_encode($request->all());
         Log::info('异步通知:' . json_encode($request->all()));
+        return response('success');
+//        return json_encode($request->all());
     }
 }

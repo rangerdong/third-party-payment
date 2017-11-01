@@ -50,7 +50,25 @@
     <div class="layui-form-item">
         <label class="layui-form-label">充值方式</label>
         <div class="layui-input-block">
-            <input type="text" name="recharge_type" value="weixin" placeholder="请输入加密方式" class="layui-input">
+            <select name="recharge_type">
+                <option value="weixin">微信扫码</option>
+                <option value="alipay">支付宝扫码</option>
+                <option value="bank">在线银行</option>
+                <option value="weixin_wap">微信wap</option>
+                <option value="alipay_wap">支付宝wap</option>
+                <option value="bank_wap">银联在线</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">银行编码</label>
+        <div class="layui-input-block">
+            <select name="bank_code">
+                @foreach(\App\Lib\BankMap::getMap() as $key => $map)
+                    <option value="{{$key}}">{{$map}}</option>
+                @endforeach
+            </select>
         </div>
     </div>
 

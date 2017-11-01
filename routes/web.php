@@ -20,7 +20,7 @@ Route::group(['domain' => env('GATEWAY_DOMAIN'), 'namespace' => 'Gateway'], func
     $router->group(['prefix' => 'recharge'], function ($router) {
         $router->any('pay', 'RechargeGatewayController@pay')->name('gateway.recharge.pay');
         $router->any('callback/{identify}', 'RechargeGatewayController@callback')->name('gateway.recharge.callback');
-        $router->any('return', 'RechargeGatewayController@return')->name('gateway.recharge.return');
+        $router->any('return/{identify}', 'RechargeGatewayController@returnHref')->name('gateway.recharge.return');
 
     });
 

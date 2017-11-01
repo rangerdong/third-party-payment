@@ -19,7 +19,7 @@ class RemitOrderController extends Controller
         $this->remitRepository = $remitOrderRepository;
     }
 
-    public function operate(AssetCountEloquent $assetCountEloquent, Request $request)
+    public function operate(Request $request)
     {
         $type = $request->input('audit');
         $id = $request->input('id');
@@ -32,11 +32,14 @@ class RemitOrderController extends Controller
                 case 'refuse':
                     $this->remitRepository->auditRefuse($id, $reason); break;
                 case 'remitted':
-                    $this->remitRepository->remitted($id, true);break;
+                    $this->remitRepository->itemRemitted($id, true); break;
                 case 'remit':
-                    $this->remitRepository->remit($id);
-
-                    break;
+                    $this->remitRepository->itemRemit($id); break;
+                case 'revoke':
+                    $this->remitRepository->itemRevoke($id); break;
+                case 'return':
+                    $this->remitRepository->itemReturn($id); break;
+                default:break;
             }
             return ApiResponseService::success(Code::SUCCESS);
         } catch (\Exception $exception) {

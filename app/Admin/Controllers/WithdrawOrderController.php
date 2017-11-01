@@ -9,6 +9,7 @@ use App\Lib\BankMap;
 use App\Lib\SystemNumber;
 use App\Models\RemitOrder;
 
+use App\Presenters\Admin\ToPayOrderPresenter;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
@@ -92,7 +93,7 @@ class WithdrawOrderController extends Controller
             $grid->column('bk_username', '姓名');
             $grid->column('bk_account', '账号');
             $grid->column('bk_category', '银行')->display(function ($category) {
-                return BankMap::getMap($category);
+                return BankMap::getNameFromMap($category);
             });
             $grid->column('bk_prov', '省份');
             $grid->column('bk_city', '城市');
@@ -100,8 +101,8 @@ class WithdrawOrderController extends Controller
             $grid->column('money', '出款金额');
             $grid->column('fee', '收取手续费');
             $grid->column('ac_money', '实际扣款');
-            $grid->column('status', '单据状态')->display(function ($status) {
-                return config('status.remitOrder.'.$status);
+            $grid->column('status', '单据状态')->display(function ($status){
+                return (new ToPayOrderPresenter())->batchStatus($status);
             });
 
             $grid->disableCreation();

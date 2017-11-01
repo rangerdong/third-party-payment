@@ -3,19 +3,24 @@ namespace App\Lib;
 
 class SystemNumber
 {
+    protected static function suffix()
+    {
+        return date('YmdHis') . substr(time(), -3) . random_int(0,9);
+    }
+
     public static function getRechargeOrderNumber()
     {
-        return 'RN' . date('YmdHis') . substr(time(), -3) . random_int(0,9);
+        return 'RN' . self::suffix();
     }
 
     public static function getWithdrawOrderNumber()
     {
-        return 'WD' . date('YmdHis') . substr(time(), -3) . random_int(0, 9);
+        return 'WD' . self::suffix();
     }
 
     public static function getToPayPrefixNumber()
     {
-        return 'TP' . date('YmdHis') . substr(time(), -3) . random_int(0, 9);
+        return 'TP' . self::suffix();
     }
 
     public static function getToPayOrderNumber($prefix, $number)

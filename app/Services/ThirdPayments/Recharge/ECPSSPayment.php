@@ -4,13 +4,14 @@ namespace App\Services\ThirdPayments\Recharge;
 use App\Exceptions\RechargeGatewayException;
 use App\Lib\Code;
 use App\Lib\PaymentMap;
+use App\Lib\ThirdPartyMap;
 use App\Models\RechargeOrder;
 use App\Services\ThirdPayments\Contracts\QRCapable;
-use App\Services\ThirdPayments\Contracts\RechargeBase;
+use App\Services\ThirdPayments\Contracts\RechargeBaseAbstract;
 use App\Services\ThirdPayments\Contracts\WAPable;
-use App\Services\ThirdPayments\Recharge\BankTraits\ECPSSBankMap;
+use App\Services\ThirdPayments\BankTraits\ECPSSBankMap;
 
-class ECPSSPayment extends RechargeBase implements QRCapable, WAPable
+class ECPSSPayment extends RechargeBaseAbstract implements QRCapable, WAPable
 {
     use ECPSSBankMap;
 
@@ -60,22 +61,6 @@ class ECPSSPayment extends RechargeBase implements QRCapable, WAPable
         return "ok";
     }
 
-    /**
-     *  todo: change the $this->payment_map variable
-     *
-     * @return mixed
-     */
-    function initPaymentMap()
-    {
-        // TODO: Implement initPaymentMap() method.
-        $this->payment_map = [
-            PaymentMap::WX => 'WxScanPay',
-            PaymentMap::ALI => 'AliScanPay',
-            PaymentMap::BANK => 'B2CDebit',
-            PaymentMap::BANK_WAP => 'noCard',
-            PaymentMap::ALI_WAP => 'AliAppPay',
-        ];
-    }
 
     public function initParameters(RechargeOrder $rechargeOrder)
     {
@@ -96,7 +81,7 @@ class ECPSSPayment extends RechargeBase implements QRCapable, WAPable
 
     public function qrCode(RechargeOrder $rechargeOrder)
     {
-        $this->setPayGateway($this->qrCodeGateway);
+        $this->setGwPay($this->qrCodeGateway);
         $this->initParameters($rechargeOrder);
         $post_xml = <<<xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -113,7 +98,7 @@ class ECPSSPayment extends RechargeBase implements QRCapable, WAPable
 </ScanPayRequest>
 xml;
         $requestDomain = base64_encode($post_xml);
-        $res = curlHttp($this->getPayGateway(), compact('requestDomain'), 'post');
+        $res = curlHttp($this->getGwPay(), compact('requestDomain'), 'post');
         if ($res['http_code'] == 200) {
             $res_xml = simplexml_load_string($res['body']);
             $response = json_decode(json_encode($res_xml), true);
@@ -145,8 +130,8 @@ xml;
             $this->setParameter('defaultBankNumber', $this->getBank($mchData['bank_code']));
         }
         $this->setParameter('SignInfo', $this->paySign());
-        $this->setPayGateway($this->bankGateway);
-        return $this->getPayGateway() . '?' . http_build_query($this->getParameters());
+        $this->setGwPay($this->bankGateway);
+        return $this->getGwPay() . '?' . http_build_query($this->getParameters());
     }
 
     public function scanCode(RechargeOrder $rechargeOrder)
@@ -158,7 +143,7 @@ xml;
     {
         // TODO: Implement wapReq() method.
         $this->initParameters($rechargeOrder);
-        $this->setPayGateway($this->appGateway);
+        $this->setGwPay($this->appGateway);
         $post_xml = <<<xml
 <?xml version="1.0" encoding="utf-8"?>
 <ScanPayRequest>
@@ -180,5 +165,34 @@ xml;
 </form><script>window.onload = function(){document.forms['ecpss-from'].submit()}</script>
 form;
         return $reqForm;
+    }
+
+    public function getOrderNoFromCallback(array $data)
+    {
+        // TODO: Implement getOrderNoFromCallback() method.
+        return array_key_exists('BillNo', $data) ? $data['BillNo'] : null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIdentify(): string
+    {
+        // TODO: Implement getIdentify() method.
+        return ThirdPartyMap::HUICHAO;
+    }
+
+    /**
+     *  needs child to achieve
+     */
+    public function initPaymentMap(): array
+    {
+        return [
+            PaymentMap::WX => 'WxScanPay',
+            PaymentMap::ALI => 'AliScanPay',
+            PaymentMap::BANK => 'B2CDebit',
+            PaymentMap::BANK_WAP => 'noCard',
+            PaymentMap::ALI_WAP => 'AliAppPay',
+        ];
     }
 }
