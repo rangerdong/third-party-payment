@@ -67,6 +67,7 @@ Route::group([
         $r->post('platuser/app/audit', 'ApiController@auditApp')->name('api.platuser.app.audit');
 
         $r->post('order/recharge/callback', 'ApiController@rechargeCallback')->name('api.order.recharge.callback');
+        $r->post('order/recharge/resupply', 'RechargeOrderController@resupplyOrder')->name('api.order.recharge.resupply');
 
         $r->post('order/remit/operate', 'RemitOrderController@operate')->name('api.order.remit.operate');
     });

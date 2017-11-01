@@ -65,6 +65,19 @@ class QYFPayment extends RechargeBaseAbstract
     public function query(RechargeOrder $rechargeOrder)
     {
         // TODO: Implement query() method.
+        $this->setParameter('userid', $this->getMchId());
+        $this->setParameter('orderid', $rechargeOrder->plat_no);
+        $this->setParameter('sign', $this->querySign());
+        $res = curlHttp($this->getGwQuery(), $this->getParameters());
+        $body = $res['body'];
+        if (mb_detect_encoding($body, 'UTF-8', true) === false) {
+            $body = iconv('gb2312', 'UTF-8//IGNORE', $body);
+        }
+        if (strpos($body, '此订单为成功订单') === false) {
+            return $body;
+        } else {
+            return true;
+        }
     }
 
     public function bankHref(RechargeOrder $rechargeOrder)
@@ -95,6 +108,11 @@ class QYFPayment extends RechargeBaseAbstract
     public function querySign(): string
     {
         // TODO: Implement querySign() method.
+        $signStr = 'userid='.$this->getParameter('userid');
+        $signStr .= 'orderid='.$this->getParameter('orderid');
+        $signStr .= 'keyvalue='.$this->getMchKey();
+        $sign = md5($signStr);
+        return $sign;
     }
 
     public function showSuccess(): string

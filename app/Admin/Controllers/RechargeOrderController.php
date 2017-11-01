@@ -3,6 +3,8 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\Actions\RechargeCallback;
+use App\Admin\Extensions\Actions\RechargeResupply;
+use App\Lib\Status\RechargeOrderStatus;
 use App\Models\RechargeOrder;
 
 use App\Presenters\Admin\RechargeOrderPresenter;
@@ -75,6 +77,7 @@ class RechargeOrderController extends Controller
     {
         return Admin::grid(RechargeOrder::class, function (Grid $grid) {
 
+            $grid->model()->orderBy('created_at', 'desc');
             $grid->id('ID')->sortable();
             $grid->column('plat_no', '系统订单号');
             $grid->column('merchant_no', '商户订单号');
@@ -96,8 +99,10 @@ class RechargeOrderController extends Controller
             $grid->updated_at('更新时间');
             $grid->actions(function ($actions) {
                 $row = $actions->row;
-                if ($row['order_status'] == 1) {
+                if ($row['order_status'] == RechargeOrderStatus::SUCCESS) {
                     $actions->append(new RechargeCallback($this->getKey()));
+                } elseif ($row['order_status'] == RechargeOrderStatus::PENDING) {
+                    $actions->append(new RechargeResupply($this->getKey()));
                 }
             });
         });

@@ -29,9 +29,4 @@ class Code extends AbstractCode {
 	}
 	
 
-	
-	public static function getErrorMsg($code) {
-		$msgArray = self::errMsg();
-		return $msgArray[$code];
-	}
 }

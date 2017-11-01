@@ -16,9 +16,9 @@ class CreateSettlementIfsTable extends Migration
         Schema::create('settlement_ifs', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name', 100)->comment('接口名称');
-            $table->integer('if_id')->comment('接口商字典id');
-            $table->string('gw_pay')->comment('结算网关');
-            $table->string('gw_query')->comment('结算查询网关');
+            $table->string('identify', 20)->comment('接口商标识');
+//            $table->string('gw_pay')->comment('结算网关');
+//            $table->string('gw_query')->comment('结算查询网关');
             $table->string('mc_id', 255)->comment('商户id');
             $table->string('mc_key', 255)->comment('商户密钥');
             $table->tinyInteger('type')->default(1)->comment('结算类型 1单笔结算 2批量结算');

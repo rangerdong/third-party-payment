@@ -84,15 +84,6 @@ class GatewayCode extends AbstractCode
         ];
     }
 
-    public static function getErrorMsg($code)
-    {
-        // TODO: Implement getErrorMsg() method.
-        $errArr = self::errMsg();
-        if ( ! array_key_exists($code, $errArr)) {
-            return $code;
-        }
-        return $errArr[$code];
-    }
 
     protected static function fieldRequired($field)
     {

@@ -3,21 +3,20 @@ namespace App\Admin\Extensions\Actions;
 
 use Encore\Admin\Admin;
 
-class RechargeCallback
+class RechargeResupply
 {
-    protected $order_id;
+    protected $id;
 
     public function __construct($id)
     {
-        $this->order_id = $id;
+        $this->id = $id;
     }
 
     protected function script()
     {
-        $url = route('api.order.recharge.callback');
-        $token = csrf_token();
-        return <<<script
-$('a.grid-callback').on('click', function () {
+        $url = route('api.order.recharge.resupply');
+        $script = <<<script
+$('a.grid-resupply').on('click', function () {
     var id = $(this).data('id');
     console.log(id);
     layer.load(2);
@@ -25,7 +24,6 @@ $('a.grid-callback').on('click', function () {
         type: 'post',
         url: '{$url}',
         data: {
-                _token:'{$token}',
                 id: id
         },
         success: function (data) {
@@ -50,12 +48,13 @@ $('a.grid-callback').on('click', function () {
     });
 });
 script;
+        return $script;
     }
 
-    protected function render()
+    public function render()
     {
         Admin::script($this->script());
-        return "<a class='grid-callback' data-toggle='tooltip' data-placement='left' title='补发通知' href='javascript:void(0);' data-id='{$this->order_id}'><i class='fa fa-commenting'></i></a>";
+        return "<a class='grid-resupply' data-toggle='tooltip' data-placement='left' title='补单' href='javascript:void(0);' data-id='{$this->id}'><i class='fa fa-comments-o'></i></a>";
     }
 
     public function __toString()

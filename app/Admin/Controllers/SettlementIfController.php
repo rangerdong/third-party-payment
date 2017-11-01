@@ -2,6 +2,8 @@
 
 namespace App\Admin\Controllers;
 
+use App\Lib\RemitThirdMap;
+use App\Lib\ThirdPartyMap;
 use App\Models\DictInterface;
 use App\Models\DictPayment;
 use App\Models\SettlementIf;
@@ -77,7 +79,9 @@ class SettlementIfController extends Controller
 
             $grid->id('ID')->sortable();
             $grid->column('name', '接口名称');
-            $grid->column('ifdict.name', '接口商');
+            $grid->column('identify', '接口商')->display(function ($identify) {
+                return RemitThirdMap::getNameFromMap($identify);
+            });
             $grid->type('结算类型')->display(function ($type) {
                 return $type == 1 ? '单笔': '批量';
             });
@@ -99,14 +103,14 @@ class SettlementIfController extends Controller
         return Admin::form(SettlementIf::class, function (Form $form) {
 
             $form->display('id', 'ID');
-            $form->select('if_id', '接口商')->options(DictInterface::all()->pluck('name', 'id'));
+            $form->select('identify', '接口商')->options(RemitThirdMap::getMap());
             $form->multipleSelect('payments', '支持通道')
                 ->options(DictPayment::settle()->get()->pluck('name', 'id'));
             $form->text('name', '接口名称')->rules('required|max:255');
             $form->text('mc_id', '商户id')->rules('required|max:255');
             $form->text('mc_key', '商户密钥')->rules('required|max:255');
-            $form->text('gw_pay', '结算网关')->rules('required|url');
-            $form->text('gw_query', '结算查询网关')->rules('required|url');
+//            $form->text('gw_pay', '结算网关')->rules('required|url');
+//            $form->text('gw_query', '结算查询网关')->rules('required|url');
             $form->radio('type', '结算类型')->options([
                 1 => '单笔',
                 2 => '批量'

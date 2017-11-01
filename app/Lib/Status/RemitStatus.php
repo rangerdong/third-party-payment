@@ -24,7 +24,7 @@ class RemitStatus extends AbstractStatus
     const REMIT_CANCER           =  5;
     const REMIT_RETURN           =  6;
 
-    public static function getStatusMap($code = null)
+    public static function getMap():array
     {
         // TODO: Implement getStatusMap() method.
         $array = [
@@ -37,8 +37,6 @@ class RemitStatus extends AbstractStatus
             self::REMIT_RETURN      => '已退回',
             self::REFUSE_REVIEW     => '审核未通过'
         ];
-        if ($code !== null) return $array[$code];
         return $array;
-
     }
 }

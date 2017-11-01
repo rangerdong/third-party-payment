@@ -109,7 +109,7 @@ class RechargeGatewayController extends Controller
 //                    $notify_info = $third_if->callback($order);
                     $notify_info = ['plat_no' => $notify_data['orderid']];
                     if ($notify_info !== false) {
-                        $order = $this->orderService->updateOrder($order, $notify_data, $notify_data);
+                        $order = $this->orderService->updateOrder($order, $notify_data, $notify_info);
                         $this->orderService->settleOrder($order);
                         $notify = $rechargeOrderNotifyService->createNewNotify($order);
                         SendRechargeCallback::dispatch($notify)->onQueue('recharge.callback');

@@ -11,7 +11,7 @@ use App\Services\ThirdPayments\Recharge\QYFPayment1;
 
 class RechargePaymentFactory
 {
-    public static function getInstance($identify)
+    public function getInstance($identify)
     {
         $instance = null;
         switch ($identify) {

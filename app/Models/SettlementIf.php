@@ -13,10 +13,10 @@ class SettlementIf extends Model
     protected $table = 'settlement_ifs';
     protected $dates = ['deleted_at'];
 
-    public function ifdict()
-    {
-        return $this->belongsTo(DictInterface::class, 'if_id');
-    }
+//    public function ifdict()
+//    {
+//        return $this->belongsTo(DictInterface::class, 'if_id');
+//    }
 
     public function payments()
     {
