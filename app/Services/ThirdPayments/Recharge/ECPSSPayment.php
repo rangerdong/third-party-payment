@@ -18,6 +18,8 @@ class ECPSSPayment extends RechargeBaseAbstract implements QRCapable, WAPable
     protected $bankGateway = 'https://gwapi.yemadai.com/pay/sslpayment';
     protected $qrCodeGateway = "https://gwapi.yemadai.com/pay/scanpay";
     protected $appGateway = 'https://gwapi.yemadai.com/pay/apppay';
+    protected $gw_query = 'https://gwapi.yemadai.com/merchantBatchQueryAPI';
+    protected $gw_refund = 'https://gwapi.yemadai.com/merchantRefundAPI';
 
     public function callback(array $data)
     {
@@ -34,6 +36,21 @@ class ECPSSPayment extends RechargeBaseAbstract implements QRCapable, WAPable
     public function query(RechargeOrder $rechargeOrder)
     {
         // TODO: Implement query() method.
+        $requestDomain = <<<xml
+<?xml version="1.0" encoding="utf-8"?>
+<root tx="1001">
+<MerNo>{$this->getMchId()}</MerNo>
+<orderNumber>{$rechargeOrder->plat_no}</orderNumber>
+<beginTime></beginTime>
+<endTime></endTime>
+<pageIndex></pageIndex>
+<sign>{$this->querySign()}</sign>
+</root>
+xml;
+        $requestDomain = base64_encode($requestDomain);
+        $res = curlHttp($this->getGwQuery(), compact('requestDomain'), 'post');
+        return $res['body'];
+
     }
 
     public function paySign(): string
@@ -53,6 +70,8 @@ class ECPSSPayment extends RechargeBaseAbstract implements QRCapable, WAPable
     public function querySign(): string
     {
         // TODO: Implement querySign() method.
+        $sign = strtoupper(md5($this->getMchId() . $this->getMchKey()));
+        return $sign;
     }
 
     public function showSuccess(): string

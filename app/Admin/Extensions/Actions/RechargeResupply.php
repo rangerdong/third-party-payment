@@ -27,6 +27,7 @@ $('a.grid-resupply').on('click', function () {
                 id: id
         },
         success: function (data) {
+            $.pjax.reload('#pjax-container');
             if (typeof data === 'object') {
                 if (data.code == 0) {
                     var curlReq = data.data.content

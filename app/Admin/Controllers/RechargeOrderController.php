@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\Actions\RechargeCallback;
 use App\Admin\Extensions\Actions\RechargeResupply;
+use App\Admin\Extensions\Tools\RechargeOrderClassify;
 use App\Lib\Status\RechargeOrderStatus;
 use App\Models\RechargeOrder;
 
@@ -14,6 +15,7 @@ use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use Illuminate\Support\Facades\Request;
 
 class RechargeOrderController extends Controller
 {
@@ -77,6 +79,13 @@ class RechargeOrderController extends Controller
     {
         return Admin::grid(RechargeOrder::class, function (Grid $grid) {
 
+            $classify = Request::get('classify', 99);
+            if (in_array($classify, [99, RechargeOrderStatus::PENDING, RechargeOrderStatus::SUCCESS])) {
+                if ($classify != 99) {
+                    $grid->model()->where('order_status', Request::get('classify'));
+                }
+            }
+
             $grid->model()->orderBy('created_at', 'desc');
             $grid->id('ID')->sortable();
             $grid->column('plat_no', '系统订单号');
@@ -104,6 +113,18 @@ class RechargeOrderController extends Controller
                 } elseif ($row['order_status'] == RechargeOrderStatus::PENDING) {
                     $actions->append(new RechargeResupply($this->getKey()));
                 }
+            });
+            $grid->tools(function ($tools) {
+                $tools->append(new RechargeOrderClassify());
+            });
+
+            $grid->filter(function ($filter) {
+                $filter->where(function ($query) {
+                    $query->whereHas('platuser', function ($q) {
+                        $q->where('username', 'like', "%{$this->input}%")->orWhere('code', 'like', "%{$this->input}%");
+                    });
+                }, '用户账户或编码');
+                $filter->equal('merchant_no', '商户订单号');
             });
         });
     }
