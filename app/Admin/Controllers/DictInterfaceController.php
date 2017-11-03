@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Lib\ThirdPartyMap;
 use App\Models\DictInterface;
 
 use Encore\Admin\Form;
@@ -10,6 +11,7 @@ use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use Encore\Admin\Widgets\Table;
 
 class DictInterfaceController extends Controller
 {
@@ -67,20 +69,28 @@ class DictInterfaceController extends Controller
     /**
      * Make a grid builder.
      *
-     * @return Grid
      */
     protected function grid()
     {
-        return Admin::grid(DictInterface::class, function (Grid $grid) {
+        $headers = ['接口商', '接口商标识'];
+        $maps = ThirdPartyMap::getMap();
+        $rows = [];
+        foreach ($maps as $key => $map) {
+            $rows[] = [$key, $map];
+        }
+        $table = new Table($headers, $rows);
+        return $table->render();
 
-            $grid->id('ID')->sortable();
-            $grid->name('接口商名称');
-            $grid->identify('接口商编码');
-            $grid->actions(function ($actions) {
-                $actions->disableDelete();
-            });
-
-        });
+//        return Admin::grid(DictInterface::class, function (Grid $grid) {
+//
+//            $grid->id('ID')->sortable();
+//            $grid->name('接口商名称');
+//            $grid->identify('接口商编码');
+//            $grid->actions(function ($actions) {
+//                $actions->disableDelete();
+//            });
+//
+//        });
     }
 
     /**
