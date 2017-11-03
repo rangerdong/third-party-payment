@@ -16,3 +16,12 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+//buz api
+Route::group([
+    'domain' => config('app.website.BUZ_DOMAIN'),
+    'namespace' => 'Api\Buz',
+    'middleware' => ['api']
+], function ($router) {
+    $router->post('auth/login', 'AuthController@login');
+});

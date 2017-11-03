@@ -15,6 +15,9 @@ class Code extends AbstractCode {
     const RECHARGE_THIRD_LOG            = 10001;            //充值第三方错误代码
     const RECHARGE_MCH_LOG              = 10002;            //充值商户错误代码
 
+    const JWT_INVALID                   = 20001;            //jwt token无效
+    const JWT_EXPIRED                   = 20002;            //jwt token失效
+
 	public static function errMsg() {
 		return array(
 		    self::NOTAUTH                       =>  '无权访问',
@@ -24,7 +27,10 @@ class Code extends AbstractCode {
 			self::SIGN_ERROR 					=>	'签名错误',
 			self::HTTP_REQUEST_METHOD_ERROR		=>	'api请求方式错误',
 			self::HTTP_REQUEST_PARAM_ERROR		=>	'api请求参数错误',
-            self::SYSERROR                      =>  '内部错误'
+            self::SYSERROR                      =>  '内部错误',
+
+            self::JWT_INVALID                   => 'token无效',
+            self::JWT_EXPIRED                   => 'token失效'
 		);
 	}
 	

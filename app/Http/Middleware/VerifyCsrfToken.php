@@ -15,5 +15,6 @@ class VerifyCsrfToken extends Middleware
         //
         '/admin/api/*',
         '/recharge/*',
+        '/api/*'
     ];
 }

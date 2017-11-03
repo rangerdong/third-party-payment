@@ -5,6 +5,7 @@ use Illuminate\Routing\Router;
 Admin::registerAuthRoutes();
 
 Route::group([
+    'domain'        => config('app.website.ADMIN_DOMAIN'),
     'prefix'        => config('admin.route.prefix'),
     'namespace'     => config('admin.route.namespace'),
     'middleware'    => config('admin.route.middleware'),

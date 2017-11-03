@@ -110,6 +110,9 @@ return [
 
     'website' => [
         'GATEWAY_DOMAIN' => env('GATEWAY_DOMAIN'),
+        'BUZ_DOMAIN'    => env('BUZ_DOMAIN'),
+        'HOME_DOMAIN'   => env('HOME_DOMAIN'),
+        'ADMIN_DOMAIN'  => env('ADMIN_DOMAIN'),
         'GATEWAY_SANDBOX' => env('GATEWAY_SANDBOX', false)
     ],
 
@@ -186,6 +189,8 @@ return [
         \App\Providers\GatewayServiceProvider::class,
         \App\Providers\RechargeGatewayLogServiceProvider::class,
 
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class
+
     ],
 
     /*
@@ -237,6 +242,7 @@ return [
 
 
         'RechargeLog' => App\Facades\RechargeLog::class,
+        'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class
 
     ],
 

@@ -11,11 +11,14 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['domain' => config('app.website.HOME_DOMAIN')], function () {
+    Route::get('/', function () {
+        return view('welcome');
+    });
 });
 
-Route::group(['domain' => env('GATEWAY_DOMAIN'), 'namespace' => 'Gateway'], function ($router) {
+
+Route::group(['domain' => config('app.website.GATEWAY_DOMAIN'), 'namespace' => 'Gateway'], function ($router) {
 
     $router->group(['prefix' => 'recharge'], function ($router) {
         $router->any('pay', 'RechargeGatewayController@pay')->name('gateway.recharge.pay');
@@ -25,6 +28,15 @@ Route::group(['domain' => env('GATEWAY_DOMAIN'), 'namespace' => 'Gateway'], func
     });
 
 });
+
+//buz
+Route::group([
+    'domain' => config('app.website.BUZ_DOMAIN'),
+    'namespace' => 'Buz',
+], function ($router) {
+});
+
+
 
 Route::group(['namespace' => 'Gateway\Page'], function ($r) {
     $r->get('recharge/pay',function () {
