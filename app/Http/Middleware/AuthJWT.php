@@ -21,7 +21,7 @@ class AuthJWT
     public function handle($request, Closure $next)
     {
         try {
-            $user = JWTAuth::toUser($request->input('token'));
+            $user = JWTAuth::parseToken()->authenticate();
         } catch (\Exception $e) {
             if ($e instanceof TokenInvalidException){
                 return ApiResponseService::showError(Code::JWT_INVALID);

@@ -6,8 +6,13 @@ use App\Models\Observer\PlatUserObserver;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class PlatUser extends Model implements Transformable
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class PlatUser extends  Authenticatable implements
+    Transformable,
+    JWTSubject
 {
     use TransformableTrait;
 
@@ -79,5 +84,27 @@ class PlatUser extends Model implements Transformable
     public function assets()
     {
         return $this->hasOne(AssetCount::class, 'uid');
+    }
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        // TODO: Implement getJWTIdentifier() method.
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        // TODO: Implement getJWTCustomClaims() method.
+        return [];
     }
 }

@@ -24,4 +24,6 @@ Route::group([
     'middleware' => ['api']
 ], function ($router) {
     $router->post('auth/login', 'AuthController@login');
+
+    $router->get('auth/info', 'AuthController@getAuthUser')->middleware('jwt-auth');
 });
