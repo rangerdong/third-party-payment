@@ -25,5 +25,7 @@ Route::group([
 ], function ($router) {
     $router->post('auth/login', 'AuthController@login');
 
+    $router->post('sms/send', 'SMSController@sendSms');
+
     $router->get('auth/info', 'AuthController@getAuthUser')->middleware('jwt-auth');
 });

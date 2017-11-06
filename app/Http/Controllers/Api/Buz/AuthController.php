@@ -29,9 +29,15 @@ class AuthController extends Controller
         return ApiResponseService::returnData(compact('token'));
     }
 
+
+    public function register(Request $request)
+    {
+        $tmp = $request->only('username', 'phone');
+    }
+
     public function getAuthUser(Request $request)
     {
-        $user = JWTAuth::toUser($request->input('token'));
+        $user = JWTAuth::parseToken()->authenticate();
         return ApiResponseService::returnData(compact('user'));
     }
 }
