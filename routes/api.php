@@ -24,6 +24,7 @@ Route::group([
     'middleware' => ['api']
 ], function ($router) {
     $router->post('auth/login', 'AuthController@login');
+    $router->post('auth/register', 'AuthController@register');
 
     $router->post('sms/send', 'SMSController@sendSms');
 

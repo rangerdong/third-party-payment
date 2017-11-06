@@ -14,6 +14,7 @@ class Code extends AbstractCode {
     const JWT_ERROR                     = 20003;            //jwt token生成失败
 
     const LOGIN_INVALID                 = 30001;            //用户名或密码错误
+    const REGISTER_USER_EXISTS          = 30002;            //账户已存在
 
 
     const FATAL_ERROR					= 40000;			//致命错误
@@ -43,6 +44,7 @@ class Code extends AbstractCode {
             self::JWT_ERROR                     => 'token生成失败',
 
             self::LOGIN_INVALID                 => '用户名或密码错误',
+            self::REGISTER_USER_EXISTS          => '账户已存在'
 		);
 	}
 	
