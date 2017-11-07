@@ -20,13 +20,16 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //buz api
 Route::group([
     'domain' => config('app.website.BUZ_DOMAIN'),
-    'namespace' => 'Api\Buz',
+    'namespace' => 'Api',
     'middleware' => ['api']
 ], function ($router) {
-    $router->post('auth/login', 'AuthController@login');
-    $router->post('auth/register', 'AuthController@register');
+    $router->group(['namespace' => 'Buz'], function ($router) {
+        $router->post('auth/login', 'AuthController@login');
+        $router->post('auth/register', 'AuthController@register')->middleware('sms-verify');
 
-    $router->post('sms/send', 'SMSController@sendSms');
+        $router->post('sms/send', 'SMSController@sendSms');
 
-    $router->get('auth/info', 'AuthController@getAuthUser')->middleware('jwt-auth');
+        $router->get('auth/info', 'AuthController@getAuthUser')->middleware('jwt-auth');
+    });
+
 });

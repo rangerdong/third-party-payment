@@ -47,6 +47,11 @@ class AuthController extends Controller
         return ApiResponseService::success(Code::SUCCESS);
     }
 
+    public function doRegister(Request $request)
+    {
+
+    }
+
     public function getAuthUser(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();

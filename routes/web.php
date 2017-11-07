@@ -34,6 +34,9 @@ Route::group([
     'domain' => config('app.website.BUZ_DOMAIN'),
     'namespace' => 'Buz',
 ], function ($router) {
+    $router->get('auth/login', 'AuthController@login');
+    $router->get('auth/register', 'AuthController@register');
+    $router->get('auth/doregister', 'AuthController@doRegister')->name('buz.doregister');
 });
 
 

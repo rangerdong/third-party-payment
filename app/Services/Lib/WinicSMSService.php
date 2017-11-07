@@ -1,6 +1,8 @@
 <?php
 namespace App\Services\Lib;
 
+use Illuminate\Support\Facades\Log;
+
 class WinicSMSService extends SMSAbstract
 {
     protected $id;
@@ -26,9 +28,10 @@ class WinicSMSService extends SMSAbstract
             $sms_code = substr($res['body'], 0, 3);
             if ($sms_code == '000') {
                 return true;
-            } else {
-                return false;
             }
         }
+        Log::useFiles(storage_path().'/logs/sms/'.date('YmdHis').'.log');
+        Log::info("【winic】短信接口出错! \t [http_code]" . $res['http_code'] . "\t[body]:".$res['body']);
+        return false;
     }
 }
