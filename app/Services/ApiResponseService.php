@@ -25,11 +25,13 @@ class ApiResponseService
 
 
 	public static function showError($code, $message='') {
-        if ($message == '') {
-            $message = Code::getErrorMsg($code);
+	    if ( ! is_array($message)) {
+            if ($message == '') {
+                $message = Code::getErrorMsg($code);
+            }
+            $message = $message ? $message : Code::getErrorMsg($code);
         }
-		$message = $message ? $message : Code::getErrorMsg($code);
-		$result = [
+        $result = [
 			'code' 		=> $code,
 			'message' 	=> $message
 		];

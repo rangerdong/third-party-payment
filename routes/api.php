@@ -30,6 +30,11 @@ Route::group([
 
         $router->post('sms/send', 'SMSController@sendSms');
 
+        $router->group(['middleware' => ['jwt-auth']], function ($router) {
+            $router->post('profile/authorize', 'ProfileController@authentication');
+            $router->post('profile/remit', 'ProfileController@remitBank');
+        });
+
         $router->get('auth/info', 'AuthController@getAuthUser')->middleware('jwt-auth');
     });
 

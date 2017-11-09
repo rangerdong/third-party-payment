@@ -16,10 +16,8 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Prettus\Validator\Exceptions\ValidatorException;
-use Ramsey\Uuid\Uuid;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Facades\JWTFactory;
 
 class AuthController extends Controller
 {
@@ -78,6 +76,8 @@ class AuthController extends Controller
             $userInfo = $data;
             array_forget($userInfo, 'token');
             $userInfo['username'] = $userTmp['username'];
+            $userInfo['password'] = password_hash($userInfo['password'], PASSWORD_DEFAULT);
+            $userInfo['trade_pwd'] = password_hash($userInfo['trade_pwd'], PASSWORD_DEFAULT);
             $userInfo['phone'] = $userTmp['phone'];
             $userInfo['recharge_gid'] = $defaultRechargeGroup ? $defaultRechargeGroup->id : 0;
             $userInfo['settle_gid'] = $defaultSettleGroup ? $defaultSettleGroup->id : 0;
@@ -86,7 +86,7 @@ class AuthController extends Controller
             }
             return ApiResponseService::success(Code::SUCCESS);
         } catch (ValidatorException $exception) {
-            return ApiResponseService::showError(Code::HTTP_REQUEST_PARAM_ERROR);
+            return ApiResponseService::showError(Code::HTTP_REQUEST_PARAM_ERROR, $exception->getMessageBag()->messages());
         } catch (\Exception $exception) {
             return ApiResponseService::showError(Code::FATAL_ERROR, $exception->getMessage());
         }

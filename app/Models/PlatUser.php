@@ -68,15 +68,15 @@ class PlatUser extends  Authenticatable implements
         return $query->where('recharge_api', 1);
     }
 
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = password_hash($value, PASSWORD_DEFAULT);
-    }
-
-    public function setTradePwdAttribute($value)
-    {
-        $this->attributes['trade_pwd'] = password_hash($value, PASSWORD_DEFAULT);
-    }
+//    public function setPasswordAttribute($value)
+//    {
+//        $this->attributes['password'] = password_hash($value, PASSWORD_DEFAULT);
+//    }
+//
+//    public function setTradePwdAttribute($value)
+//    {
+//        $this->attributes['trade_pwd'] = password_hash($value, PASSWORD_DEFAULT);
+//    }
 
     public function getLastAtAttribute($last_at)
     {
