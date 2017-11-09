@@ -39,7 +39,7 @@ class SMSService
 
     public function setCacheCode($mobile, $code)
     {
-        Cache::put($this->getKey($mobile), $code, config('sms.lifetime'));
+        Cache::put($this->getKey($mobile), $code, config('sms.lifetime') / 60);
     }
 
     public function getCache($mobile)

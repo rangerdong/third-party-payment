@@ -19,7 +19,7 @@ use App\Services\RechargeOrderService;
 use App\Services\RechargeSplitModeService;
 use App\Services\ThirdPayments\Contracts\QRCapable;
 use App\Services\ThirdPayments\Contracts\RechargePaymentFactory;
-use App\Validators\RechargeGatewayValidator;
+use App\Validators\Gateway\RechargeGatewayValidator;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;

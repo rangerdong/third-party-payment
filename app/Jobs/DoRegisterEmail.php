@@ -15,10 +15,11 @@ class DoRegisterEmail implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $userTmp;
+
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param \App\Models\PlatUserTmp $platUserTmp
      */
     public function __construct(PlatUserTmp $platUserTmp)
     {
@@ -28,6 +29,8 @@ class DoRegisterEmail implements ShouldQueue
 
     /**
      * Execute the job.
+     *
+     * @param \Illuminate\Mail\Mailer $mailer
      *
      * @return void
      */

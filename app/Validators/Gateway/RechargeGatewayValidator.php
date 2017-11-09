@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Validators;
+namespace App\Validators\Gateway;
 
 use App\Lib\GatewayCode;
 use \Prettus\Validator\Contracts\ValidatorInterface;

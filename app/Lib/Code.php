@@ -20,6 +20,7 @@ class Code extends AbstractCode {
 
     const LOGIN_INVALID                 = 30001;            //用户名或密码错误
     const REGISTER_USER_EXISTS          = 30002;            //账户已存在
+    const REGISTER_TOKEN_INVALID        = 30003;            //注册token无效
 
     const FATAL_ERROR					= 40000;			//致命错误
     const SIGN_ERROR 					= 40001;			//参数sign错误
@@ -49,7 +50,8 @@ class Code extends AbstractCode {
             self::SMS_INVALID                   => 'sms短信验证码无效',
 
             self::LOGIN_INVALID                 => '用户名或密码错误',
-            self::REGISTER_USER_EXISTS          => '账户已存在'
+            self::REGISTER_USER_EXISTS          => '账户已存在',
+            self::REGISTER_TOKEN_INVALID        => '注册token无效'
 		);
 	}
 	

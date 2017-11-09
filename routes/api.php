@@ -26,6 +26,7 @@ Route::group([
     $router->group(['namespace' => 'Buz'], function ($router) {
         $router->post('auth/login', 'AuthController@login');
         $router->post('auth/register', 'AuthController@register')->middleware('sms-verify');
+        $router->post('auth/doregister', 'AuthController@doRegister');
 
         $router->post('sms/send', 'SMSController@sendSms');
 

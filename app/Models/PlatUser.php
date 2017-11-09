@@ -26,6 +26,7 @@ class PlatUser extends  Authenticatable implements
         PlatUser::observe(PlatUserObserver::class);
     }
 
+    //relations
     public function apps()
     {
         return $this->hasMany(PlatUserApp::class, 'uid');
@@ -36,6 +37,12 @@ class PlatUser extends  Authenticatable implements
         return $this->belongsTo(PlatUser::class, 'upper_id');
     }
 
+    public function profile()
+    {
+        return $this->hasOne(PlatUserProfile::class, 'uid');
+    }
+
+    //scope
     public function scopeProxy($query)
     {
         return $query->where('role', 1);
@@ -61,9 +68,14 @@ class PlatUser extends  Authenticatable implements
         return $query->where('recharge_api', 1);
     }
 
-    public function profile()
+    public function setPasswordAttribute($value)
     {
-        return $this->hasOne(PlatUserProfile::class, 'uid');
+        $this->attributes['password'] = password_hash($value, PASSWORD_DEFAULT);
+    }
+
+    public function setTradePwdAttribute($value)
+    {
+        $this->attributes['trade_pwd'] = password_hash($value, PASSWORD_DEFAULT);
     }
 
     public function getLastAtAttribute($last_at)

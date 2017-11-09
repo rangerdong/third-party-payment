@@ -17,4 +17,15 @@ class RechargeGroup extends Model
         self::observe(RechargeGroupObserver::class);
     }
 
+    //scope
+    public function scopeByDefault($query)
+    {
+        return $query->where('is_default', 1);
+    }
+
+    public function scopeByBuz($query)
+    {
+        return $query->where('classify', 0);
+    }
+
 }
