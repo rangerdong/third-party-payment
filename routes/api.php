@@ -23,19 +23,23 @@ Route::group([
     'namespace' => 'Api',
     'middleware' => ['api']
 ], function ($router) {
-    $router->group(['namespace' => 'Buz'], function ($router) {
+    $router->group([
+        'namespace' => 'Buz'
+    ], function ($router) {
         $router->post('auth/login', 'AuthController@login');
-        $router->post('auth/register', 'AuthController@register')->middleware('sms-verify');
+        $router->post('auth/register', 'AuthController@register')->middleware('sms.verify');
         $router->post('auth/doregister', 'AuthController@doRegister');
 
         $router->post('sms/send', 'SMSController@sendSms');
 
-        $router->group(['middleware' => ['jwt-auth']], function ($router) {
+        $router->group([
+            'middleware' => ['jwt-auth']
+        ], function ($router) {
             $router->post('profile/authorize', 'ProfileController@authentication');
             $router->post('profile/remit', 'ProfileController@remitBank');
+            $router->get('auth/info', 'AuthController@getAuthUser');
         });
 
-        $router->get('auth/info', 'AuthController@getAuthUser')->middleware('jwt-auth');
     });
 
 });

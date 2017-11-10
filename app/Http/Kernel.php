@@ -59,6 +59,6 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'jwt-auth' => \App\Http\Middleware\AuthJWT::class,
-        'sms-verify' => \App\Http\Middleware\VerifySMSCode::class
+        'sms.verify' => \App\Http\Middleware\VerifySMSCode::class
     ];
 }

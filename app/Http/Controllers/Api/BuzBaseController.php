@@ -6,10 +6,9 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class BuzBaseController extends Controller
 {
-    protected $user;
 
-    public function __construct()
+    public function getUserFromJWT()
     {
-        $this->user = JWTAuth::parseToken()->authenticate();
+        return JWTAuth::parseToken()->authenticate();
     }
 }

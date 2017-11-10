@@ -13,19 +13,19 @@ class ProfileValidator extends LaravelValidator
         'authorize' => [
             'property' => 'required|in:0,1',
             'role' => 'required|in:0,1',
-            'realname' => 'required|max:100|unique:plat_user_profiles,realname',
+            'realname' => 'required|max:100',
             'idcard' => 'required|max:18|alpha_num',
             'scope' => 'required',
             'city_id' => 'required',
             'address' => 'required|max:255',
             'enterprise' => 'required_if:property,1|max:255|unique:plat_user_profiles,enterprise',
-            'license' => 'required_if:property,1|max:255',
+            'license' => 'required_if:property,1|max:255|unique:plat_user_profiles,license',
             'img_id_hand' => 'required|max:255',
-            'img_id_front' => 'required|max:255',
-            'img_id_back' => 'required|max:255',
-            'img_license' => 'required_if:property,1|max:255',
-            'img_tax' => 'required_if:property,1|max:255',
-            'img_permit' => 'nullable|max:255',
+            'img_id_front' => 'required|max:255|different:img_id_hand',
+            'img_id_back' => 'required|max:255|different:img_id_hand|different:img_id_front',
+            'img_license' => 'required_if:property,1|max:255|different:img_id_hand|different:img_id_front|different:img_id_back',
+            'img_tax' => 'required_if:property,1|max:255|different:img_id_hand|different:img_id_front|different:img_id_back|different:img_license',
+            'img_permit' => 'nullable|max:255|different:img_id_hand|different:img_id_front|different:img_id_back|different:img_license|different:img_tax',
          ]
    ];
 

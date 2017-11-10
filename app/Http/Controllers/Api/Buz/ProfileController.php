@@ -14,15 +14,15 @@ class ProfileController extends BuzBaseController
                                    ProfileValidator $profileValidator)
     {
         try {
-
             $data = $request->all(array_keys($profileValidator->getRules('authorize')));
             $profileValidator->with($data)->passesOrFail('authorize');
-            $data += ['uid' => $this->user->id];
+            $data += [
+                'uid' => $this->getUserFromJWT()->id,
+            ];
             dd($data);
         } catch (ValidatorException $exception) {
             return ApiResponseService::showError(Code::HTTP_REQUEST_PARAM_ERROR, $exception->getMessageBag()->messages());
         }
-
     }
 
 }
