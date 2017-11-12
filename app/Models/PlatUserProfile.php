@@ -8,6 +8,7 @@ class PlatUserProfile extends Model
 {
     //
     protected $table = 'plat_user_profiles';
+    protected $guarded = [];
 
     public function platuser()
     {

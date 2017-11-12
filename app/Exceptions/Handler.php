@@ -2,7 +2,9 @@
 
 namespace App\Exceptions;
 
+use App\Lib\Code;
 use App\Lib\GatewayCode;
+use App\Services\ApiResponseService;
 use App\Services\GatewayResponseService;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -59,6 +61,14 @@ class Handler extends ExceptionHandler
     {
         if ($request->getHost() == config('app.website.GATEWAY_DOMAIN')) {
             return GatewayResponseService::codeError(GatewayCode::SYSTEM_ERROR, $exception->getMessage());
+        }
+        if ($request->getHost() == config('app.website.BUZ_DOMAIN')) {
+            if ($exception instanceof ValidatorException) {
+                return ApiResponseService::showError(Code::HTTP_REQUEST_PARAM_ERROR, $exception->getMessageBag()->messages());
+            } elseif ($exception instanceof Exception) {
+                $debug = config('app.debug');
+                return ApiResponseService::showError(Code::FATAL_ERROR, $debug ? $exception->getMessage() : '');
+            }
         }
         return parent::render($request, $exception);
     }

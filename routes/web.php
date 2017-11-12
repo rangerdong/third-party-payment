@@ -11,9 +11,13 @@
 |
 */
 
+//home
 Route::group(['domain' => config('app.website.HOME_DOMAIN')], function () {
     Route::get('/', function () {
         return view('welcome');
+    });
+    Route::get('login', function () {
+        return view('home.login');
     });
 });
 
@@ -35,8 +39,11 @@ Route::group([
     'namespace' => 'Buz',
 ], function ($router) {
     $router->get('auth/login', 'AuthController@login');
-    $router->get('auth/register', 'AuthController@register');
+    $router->get('auth/register', 'AuthController@register')->name('buz.register');
     $router->get('auth/doregister', 'AuthController@doRegister')->name('buz.doregister');
+    $router->get('index', function () {
+        return view('buz.index');
+    });
 });
 
 

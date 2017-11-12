@@ -38,6 +38,10 @@ Route::group([
             $router->post('profile/authorize', 'ProfileController@authentication');
             $router->post('profile/remit', 'ProfileController@remitBank');
             $router->get('auth/info', 'AuthController@getAuthUser');
+
+
+
+            $router->post('tools/uploadimg', 'ToolsController@uploadImg');
         });
 
     });

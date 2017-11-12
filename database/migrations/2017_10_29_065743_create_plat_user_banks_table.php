@@ -20,9 +20,9 @@ class CreatePlatUserBanksTable extends Migration
             $table->string('username', 150)->comment('开户人名称');
             $table->string('category', 20)->comment('开户银行类型');
             $table->string('account', 30)->comment('开户账户号');
-            $table->string('city_id')->comment('开户银行所在城市id');
+            $table->integer('city_id')->comment('开户银行所在城市id');
             $table->string('branch')->comment('开户分行');
-            $table->string('number')->comment('联行号');
+            $table->string('number')->default('')->nullable()->comment('联行号');
             $table->tinyInteger('is_default')->default(0)->comment('是否默认');
             $table->unique('account');
             $table->index(['username', 'account', 'category']);
